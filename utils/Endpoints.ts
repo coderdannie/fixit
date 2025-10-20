@@ -1,0 +1,56 @@
+export const Endpoints = {
+  UPLOAD_FILE: "/onboarding/mechanic-picture",
+  GET_FILE: "/files",
+  UPLOAD_DATA_URL: "/files/upload-base64",
+  CREATE_UPLOAD_SIGNATURE: "/onboarding/mechanic-profile-picture-signature",
+  CREATE_GENERAL_UPLOAD_SIGNATURE: "/uploads/signature",
+  PREFERENCE: "/preferences",
+  USER_PREFERENCES: "/users/me/preferences",
+
+  ROOT: "/",
+  VERIFY_CODE: "/auth/verify-otp",
+  SIGNUP: "/auth/signup",
+  LOGIN: "/auth/login",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
+  RESEND_OTP: "/auth/resend-otp",
+  LOGOUT: "/auth/logout",
+  GOOGLE_SIGNIN_SIGINUP: "/auth/google-sign-in/mobile",
+  GET_ONBOARDING_STAGE: "/onboarding/status",
+  CREATE_ACCOUNT_TYPE: "onboarding",
+  MECHANIC_PROFILE_SETUP: "/onboarding/mechanic-profile-setup",
+  ADD_SERVICES: "/onboarding/mechanic-services",
+  USER_SETTINGS: "/onboarding/user-settings",
+  GET_CURRENT_LOGGED_IN_USER: "/users/me",
+
+  //jobs
+  ADD_NOTE: "/mechanics/notes",
+  GET_ALL_NOTES: "/mechanics/notes",
+};
+
+export const RtkqTagEnum = {
+  ROOT: "ROOT",
+  CHECK_EMAIL: "CHECK_EMAIL",
+  SIGNUP: "SIGNUP",
+  VERIFY_CODE: "VERIFY_CODE",
+  LOGIN: "LOGIN",
+  FORGOT_PASSWORD: "FORGOT_PASSWORD",
+  RESET_PASSWORD: "RESET_PASSWORD",
+  UPLOAD_FILE: "UPLOAD_FILE",
+  GET_FILE: "GET_FILE",
+  GET_ONBOARDING_STAGE: "GET_ONBOARDING_STAGE",
+  CREATE_ACCOUNT_TYPE: "CREATE_ACCOUNT_TYPE",
+  MECHANIC_PROFILE_SETUP: "MECHANIC_PROFILE_SETUP",
+  ADD_SERVICES: "ADD_SERVICES",
+  USER_SETTINGS: "USER_SETTINGS",
+  RESEND_OTP: "RESEND_OTP",
+  LOGOUT: "LOGOUT",
+  CREATE_UPLOAD_SIGNATURE: "CREATE_UPLOAD_SIGNATURE",
+  CREATE_GENERAL_UPLOAD_SIGNATURE: " CREATE_GENERAL_UPLOAD_SIGNATURE",
+  GET_CURRENT_LOGGED_IN_USER: "GET_CURRENT_LOGGED_IN_USER",
+
+  //job
+  ADD_NOTE: "ADD_NOTE",
+  GET_ALL_NOTES: "GET_ALL_NOTES",
+  GET_NOTE_DETAILS: "GET_NOTE_DETAILS",
+} as const;
