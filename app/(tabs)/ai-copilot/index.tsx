@@ -38,6 +38,15 @@ const Copilot = () => {
 
   const router = useRouter();
 
+  // Offset calculation for KeyboardAvoidingView:
+  // Since you are using SafeAreaView(edges={["top"]}), the top safe area is handled.
+  // The offset should generally be 0 or a small positive number on iOS,
+  // and 'padding' usually works on Android without an offset.
+  const keyboardOffset = Platform.select({
+    ios: 0,
+    android: 0, // Keep this at 0 for 'padding' behavior as a starting point
+  });
+
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -137,9 +146,9 @@ const Copilot = () => {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding" // 💡 FIX: Use 'padding' for both platforms
         className="flex-1"
-        keyboardVerticalOffset={0}
+        keyboardVerticalOffset={keyboardOffset} // Using calculated offset (0 or adjusted)
       >
         {/* Header */}
         <View className="border-b border-gray-200 bg-white">
@@ -280,6 +289,8 @@ const Copilot = () => {
               }}
             >
               <View className="flex-row items-center space-x-1">
+                {/* Note: Tailwind 'animate-pulse' might not work without specific setup. 
+                   If the dots don't animate, you may need a custom animation or library. */}
                 <View className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
                 <View
                   className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"
@@ -305,6 +316,8 @@ const Copilot = () => {
             elevation: 5,
           }}
         >
+          {/* Note: The 'pb-8' (padding-bottom: 32) is likely what pushes the content
+             up to cover the bottom safe area/notch on iOS, which is good. */}
           <View
             className={`flex-row items-center ${isTablet ? "px-10 py-6" : "px-5 pt-4 pb-8"}`}
           >

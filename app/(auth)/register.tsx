@@ -1,4 +1,7 @@
-import { useSignUpMutation } from "@/apis/authQuery";
+import {
+  useGoogleSigninAndSignUpMutation,
+  useSignUpMutation,
+} from "@/apis/authQuery";
 import CustomButton from "@/components/CustomButton";
 import FormInput from "@/components/FormInput";
 import { useAsyncStorage } from "@/hooks/useAsyncStorage";
@@ -8,14 +11,28 @@ import AuthLayout from "@/layout/AuthLayout";
 import { isTablet } from "@/utils/utils";
 import { RegisterFormType, registerSchema } from "@/utils/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const Register = () => {
   const { updateAuthUser } = useAuthUser();
   const { showSuccess, showError } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     control,
@@ -37,6 +54,8 @@ const Register = () => {
   const agreedToTerms = watch("agreeToTermsAndCondition");
 
   const [signUpEmail, { isLoading }] = useSignUpMutation();
+  const [googleSignInSignUp, { isLoading: isGoogleloading }] =
+    useGoogleSigninAndSignUpMutation();
 
   const router = useRouter();
 
@@ -69,6 +88,74 @@ const Register = () => {
     }
   };
 
+  const onGoogleSignUp = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+
+      if (!isSuccessResponse(response)) {
+        return;
+      }
+      const { idToken } = response.data;
+      try {
+        const googleRes = await googleSignInSignUp({
+          idToken,
+        }).unwrap();
+        const user = googleRes.data.user;
+        const steps = googleRes?.data?.onboarding?.steps;
+
+        console.log("user", googleRes);
+        updateAuthUser({
+          data: googleRes?.data,
+          accessToken: googleRes.data.token.accessToken,
+          expiresIn: googleRes.data.expiresIn,
+        });
+
+        if (googleRes.data?.onboarding?.role === "MECHANIC") {
+          if (!steps?.selectUserRole?.completed) {
+            router.push("/(auth)/account_type");
+          } else if (!steps?.mechanicProfileSetup?.completed) {
+            router.push("/mechanic-profile-setup");
+          } else if (!steps?.mechanicProfilePicture?.completed) {
+            router.push("/upload-profile-picture");
+          } else if (!steps?.mechanicServices?.completed) {
+            router.push("/service");
+          } else if (!steps?.userSettings?.completed) {
+            router.push("/stay_connected");
+          } else {
+            router.push("/(tabs)/home");
+          }
+        }
+      } catch (apiError: any) {
+        console.error("API error:", apiError);
+        showError(
+          "Sign-up Error",
+          apiError?.data?.message ?? "An unexpected error occurred"
+        );
+      }
+    } catch (err: any) {
+      // Google Sign-In errors
+      if (isErrorWithCode(err)) {
+        switch (err.code) {
+          case statusCodes.IN_PROGRESS:
+            console.warn("Google Sign-In already in progress");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.warn("Google Play Services not available");
+            break;
+          default:
+            console.error("Google Sign-In failed:", err);
+        }
+      } else {
+        console.error("Unknown error during Google Sign-In:", err);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleTermsPress = () => {
     // Replace with your actual terms URL
     Linking.openURL("https://fixit.com/terms");
@@ -77,11 +164,6 @@ const Register = () => {
   const handlePrivacyPress = () => {
     // Replace with your actual privacy policy URL
     Linking.openURL("https://fixit.com/privacy");
-  };
-
-  const onGoogleSignUp = () => {
-    console.log("Google sign up pressed");
-    // Implement Google sign up logic here
   };
 
   const onLoginPress = () => {
@@ -219,10 +301,33 @@ const Register = () => {
             }}
             activeOpacity={0.8}
           >
-            <Image source={require("../../assets/images/google.png")} />
-            <Text className="ml-3 text-base text-textPrimary">
-              Sign up with Google
-            </Text>
+            {isGoogleloading ? (
+              <>
+                <ActivityIndicator color={"#F23A4A"} size="small" />
+                <Text
+                  className={` ${
+                    isTablet ? "text-xl" : "text-base"
+                  } font-semibold text-textPrimary text-center `}
+                >
+                  Please wait...
+                </Text>
+              </>
+            ) : (
+              <>
+                <Image
+                  source={require("../../assets/images/google.png")}
+                  className={`${isTablet ? "" : "w-6 h-6"}`}
+                  resizeMode="cover"
+                />
+                <Text
+                  className={` ${
+                    isTablet ? "text-xl" : "text-base"
+                  } ml-3 text-base text-textPrimary font-semibold`}
+                >
+                  Sign up with Google
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
 

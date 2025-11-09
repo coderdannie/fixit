@@ -259,7 +259,7 @@ const Note = () => {
 
     try {
       await deleteNote({ id: noteId }).unwrap();
-      showSuccess("Success", "Note deleted successfully");
+      // showSuccess("Success", "Note deleted successfully");
       setShowDeleteModal(false);
       router.back();
     } catch (error: any) {

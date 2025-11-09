@@ -26,8 +26,6 @@ const Home = () => {
           >
             <Image
               style={{
-                width: 100,
-                height: 100,
                 resizeMode: "cover",
               }}
               source={{ uri: userProfile?.picture }}

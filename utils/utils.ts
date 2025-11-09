@@ -1,3 +1,4 @@
+import { Message } from "@/types/chats";
 import { Image } from "expo-image";
 import { Dimensions, Platform } from "react-native";
 
@@ -124,5 +125,48 @@ export const formatDate = (dateString: string) => {
     return `${diffInWeeks}w ago`;
   } else {
     return date.toLocaleDateString();
+  }
+};
+
+// Helper function to check if we need to show date separator
+export const shouldShowDateSeparator = (
+  messages: Message[],
+  currentIndex: number
+) => {
+  if (currentIndex === 0) return true;
+
+  const currentMsg = messages[currentIndex];
+  const previousMsg = messages[currentIndex - 1];
+
+  const currentDate = new Date(currentMsg.timestamp);
+  const previousDate = new Date(previousMsg.timestamp);
+
+  currentDate.setHours(0, 0, 0, 0);
+  previousDate.setHours(0, 0, 0, 0);
+
+  return currentDate.getTime() !== previousDate.getTime();
+};
+
+export const formatDates = (date: Date): string => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const messageDate = new Date(date);
+
+  today.setHours(0, 0, 0, 0);
+  yesterday.setHours(0, 0, 0, 0);
+  messageDate.setHours(0, 0, 0, 0);
+
+  if (messageDate.getTime() === today.getTime()) {
+    return "Today";
+  } else if (messageDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 };

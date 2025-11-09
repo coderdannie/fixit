@@ -149,3 +149,46 @@ export const jobDetails = {
   mechanicNotes:
     "Replaced brake pads and rotors. Inspected brake lines and fluid levels. No leaks found. Test drove vehicle to ensure proper brake function.",
 };
+
+export const supportAvatars = [
+  { initial: "S", color: "#003466" },
+  { initial: "M", color: "#2964C2" },
+  { initial: "A", color: "#003466" },
+  { initial: "P", color: "#2964C2" },
+  { initial: "J", color: "#003466" },
+];
+
+export const chatData: any[] = [
+  // {
+  //   id: "1",
+  //   name: "Jason Alex",
+  //   message: "Okay, thank you",
+  //   time: "2 hours ago",
+  //   unreadCount: 3,
+  //   avatar: "https://i.pravatar.cc/150?img=1",
+  // },
+  // {
+  //   id: "2",
+  //   name: "John Bull",
+  //   message: "Hi Sarah, how is the going?",
+  //   time: "3 hours ago",
+  //   unreadCount: 2,
+  //   avatar: "https://i.pravatar.cc/150?img=2",
+  // },
+  // {
+  //   id: "3",
+  //   name: "Ralph James",
+  //   message: "Thank you so much Sarah",
+  //   time: "Yesterday",
+  //   unreadCount: 0,
+  //   avatar: "https://i.pravatar.cc/150?img=3",
+  // },
+  // {
+  //   id: "4",
+  //   name: "Rose Peter",
+  //   message: "Really? I hope to get a high quality job done",
+  //   time: "Monday",
+  //   unreadCount: 0,
+  //   avatar: "https://i.pravatar.cc/150?img=4",
+  // },
+];

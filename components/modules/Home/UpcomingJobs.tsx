@@ -5,25 +5,25 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
-const upcomingJobsData = [
-  {
-    id: "1",
-    vehicle: "Toyota Camry 2017",
-    jobType: "Engine Diagnostics",
-    dueTime: "01:54:03",
-  },
-  {
-    id: "2",
-    vehicle: "Honda Accord 2019",
-    jobType: "Oil Change",
-    dueTime: "03:20:15",
-  },
-  {
-    id: "3",
-    vehicle: "Honda Accord 2019",
-    jobType: "Oil Change",
-    dueTime: "03:20:15",
-  },
+const upcomingJobsData: any[] = [
+  // {
+  //   id: "1",
+  //   vehicle: "Toyota Camry 2017",
+  //   jobType: "Engine Diagnostics",
+  //   dueTime: "01:54:03",
+  // },
+  // {
+  //   id: "2",
+  //   vehicle: "Honda Accord 2019",
+  //   jobType: "Oil Change",
+  //   dueTime: "03:20:15",
+  // },
+  // {
+  //   id: "3",
+  //   vehicle: "Honda Accord 2019",
+  //   jobType: "Oil Change",
+  //   dueTime: "03:20:15",
+  // },
 ];
 
 const JobCard = ({ item, handleStart }: any) => {
@@ -82,7 +82,7 @@ const UpcomingJobs = () => {
         >
           Upcoming Jobs
         </Text>
-        {upcomingJobsData.length && (
+        {upcomingJobsData.length > 0 && (
           <TouchableOpacity onPress={handleViewMore}>
             <Text
               className={`text-[#666666] ${isTablet ? "text-xl" : "text-base"}`}

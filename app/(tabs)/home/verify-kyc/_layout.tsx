@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function HomeLayout() {
+export default function Jobs() {
   return (
     <Stack
       screenOptions={{
@@ -9,10 +9,7 @@ export default function HomeLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="jobs" />
-      <Stack.Screen name="job-notes" />
-      <Stack.Screen name="notifications" />
-      <Stack.Screen name="verify-kyc" />
+      <Stack.Screen name="uploadID" />
     </Stack>
   );
 }

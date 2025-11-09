@@ -48,9 +48,11 @@ function RootLayout() {
         text1Style={{
           fontSize: 14,
           fontWeight: "400",
-          fontFamily: "regular",
+          // FIX: Removed custom font here as it interferes with toast dismissal
+          // fontFamily: "regular",
         }}
-        text2NumberOfLines={0}
+        // FIX: Replaced 0 with a safe limit
+        text2NumberOfLines={2}
       />
     ),
 
@@ -61,12 +63,14 @@ function RootLayout() {
         text1Style={{
           fontSize: 14,
           fontWeight: "400",
-          fontFamily: "regular",
+          // FIX: Removed custom font here as it interferes with toast dismissal
+          // fontFamily: "regular",
         }}
         text2Style={{
           fontSize: 12,
         }}
-        text2NumberOfLines={0}
+        // FIX: Replaced 0 with a safe limit
+        text2NumberOfLines={2}
       />
     ),
 

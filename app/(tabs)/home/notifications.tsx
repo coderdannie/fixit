@@ -4,7 +4,6 @@ import {
   WarningIcon,
 } from "@/assets/images/Icon";
 import BackBtn from "@/components/BackBtn";
-import Icon from "@/components/Icon";
 import { isTablet } from "@/utils/utils";
 import React from "react";
 import {
@@ -15,9 +14,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// Assuming you have an EmptyState image or icon you want to use
-// For this example, I'll use your existing Feather Icon component.
 
 interface Notification {
   id: number;
@@ -142,11 +138,11 @@ const Notifications: React.FC = () => {
         <BackBtn isMarginBottom />
       </View>
 
-      <View className="mb-6 flex-row justify-between">
+      <View className="mb-6">
         <Text className="text-2xl font-bold text-gray-900">Notifications</Text>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Icon type="Feather" name="settings" color="#00000" size={24} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </>
   );

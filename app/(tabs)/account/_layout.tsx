@@ -9,6 +9,8 @@ export default function AccountLayout() {
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="notification-settings" />{" "}
+      <Stack.Screen name="delete-account" />
     </Stack>
   );
 }

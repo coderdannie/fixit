@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     paddingHorizontal: 12,
     paddingTop: 15,
-    paddingBottom: 15,
+    paddingBottom: 0,
   },
   tabItem: {
     flexDirection: "row",

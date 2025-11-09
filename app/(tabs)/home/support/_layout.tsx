@@ -9,10 +9,7 @@ export default function HomeLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="jobs" />
-      <Stack.Screen name="job-notes" />
-      <Stack.Screen name="notifications" />
-      <Stack.Screen name="verify-kyc" />
+      <Stack.Screen name="[id]" />
     </Stack>
   );
 }

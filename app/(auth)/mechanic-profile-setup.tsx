@@ -15,6 +15,24 @@ import React, { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
+// --- NEW UTILITY FUNCTION TO CONVERT 12HR (e.g., "9:00 AM") TO 24HR (e.g., "09:00") FOR API ---
+const convertTo24Hour = (time12: string): string => {
+  if (!time12 || !time12.includes(" ")) return "";
+
+  const [time, period] = time12.split(" ");
+  let [hours, minutes] = time.split(":");
+  let h = parseInt(hours, 10);
+
+  if (period === "PM" && h !== 12) {
+    h += 12;
+  } else if (period === "AM" && h === 12) {
+    h = 0;
+  }
+
+  return `${h.toString().padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+};
+// -------------------------------------------------------------------------------------------------
+
 const MechanicProfileSetup = () => {
   const { showSuccess, showError } = useToast();
 
@@ -46,20 +64,14 @@ const MechanicProfileSetup = () => {
   const fromTimePickerRef = useRef<BottomSheet>(null);
   const toTimePickerRef = useRef<BottomSheet>(null);
 
-  // Convert 24-hour to 12-hour format for display
-  const convertTo12Hour = (time24: string): string => {
-    const [hours, minutes] = time24.split(":").map(Number);
-    const period = hours >= 12 ? "PM" : "AM";
-    const displayHours = hours % 12 || 12;
-    return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
-  };
+  // --- REMOVED convertTo12Hour function - it is no longer needed for display ---
 
   // Handle experience selection
   const handleExperienceSelect = (value: string) => {
     setValue("yearsOfExperience", value, { shouldValidate: true });
   };
 
-  // Handle time selection
+  // Handle time selection - CustomTimePicker now outputs 12-hour string with AM/PM
   const handleFromTimeSelect = useCallback(
     (time: string) => {
       setValue("availabilityFrom", time, { shouldValidate: true });
@@ -91,8 +103,11 @@ const MechanicProfileSetup = () => {
         businessName: values?.businessName,
         businessAddress: values?.businessAddress,
         yearsOfExperience: Number(values?.yearsOfExperience),
-        availabilityStartTime: values?.availabilityFrom,
-        availabilityEndTime: values?.availabilityTo,
+
+        // --- REVISED: Convert 12-hour state value to 24-hour API value ---
+        availabilityStartTime: convertTo24Hour(values?.availabilityFrom),
+        availabilityEndTime: convertTo24Hour(values?.availabilityTo),
+        // ----------------------------------------------------------------
       }).unwrap();
       if (res) {
         showSuccess("Success", res.message || "Profile created successfully");
@@ -188,9 +203,11 @@ const MechanicProfileSetup = () => {
                             : "text-gray-400"
                         }`}
                       >
+                        {/* --- REVISED DISPLAY LOGIC --- */}
                         {watchedValues.availabilityFrom
-                          ? convertTo12Hour(watchedValues.availabilityFrom)
+                          ? watchedValues.availabilityFrom // Use state value directly (e.g., "9:00 AM")
                           : "From"}
+                        {/* ----------------------------- */}
                       </Text>
                       <Icon
                         type="Feather"
@@ -215,9 +232,11 @@ const MechanicProfileSetup = () => {
                             : "text-gray-400"
                         }`}
                       >
+                        {/* --- REVISED DISPLAY LOGIC --- */}
                         {watchedValues.availabilityTo
-                          ? convertTo12Hour(watchedValues.availabilityTo)
+                          ? watchedValues.availabilityTo // Use state value directly (e.g., "5:00 PM")
                           : "To"}
+                        {/* ----------------------------- */}
                       </Text>
                       <Icon
                         type="Feather"
@@ -248,7 +267,8 @@ const MechanicProfileSetup = () => {
       <CustomTimePicker
         ref={fromTimePickerRef}
         title="Select Start Time"
-        selectedTime={watchedValues.availabilityFrom || "09:00"}
+        // Ensure initial selected time is 12-hour format for the picker if it's currently a 24-hour default
+        selectedTime={watchedValues.availabilityFrom || "9:00 AM"}
         onTimeSelect={handleFromTimeSelect}
       />
 
@@ -256,7 +276,8 @@ const MechanicProfileSetup = () => {
       <CustomTimePicker
         ref={toTimePickerRef}
         title="Select End Time"
-        selectedTime={watchedValues.availabilityTo || "17:00"}
+        // Ensure initial selected time is 12-hour format for the picker if it's currently a 24-hour default
+        selectedTime={watchedValues.availabilityTo || "5:00 PM"}
         onTimeSelect={handleToTimeSelect}
       />
     </>

@@ -68,5 +68,5 @@ export default function Index() {
   }
 
   // All steps completed, go home
-  return <Redirect href="/(tabs)/home" />;
+  return <Redirect href="/upload-profile-picture" />;
 }

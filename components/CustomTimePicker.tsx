@@ -9,7 +9,7 @@ import CustomButton from "./CustomButton";
 
 interface TimePickerProps {
   title?: string;
-  selectedTime?: string; // "HH:mm"
+  selectedTime?: string; // "HH:mm" or "HH:mm AM/PM"
   onTimeSelect?: (time: string) => void;
   onClose?: () => void;
 }
@@ -24,15 +24,30 @@ const CustomTimePicker = forwardRef<BottomSheet, TimePickerProps>(
   ) => {
     const snapPoints = React.useMemo(() => ["65%"], []);
 
-    // Parse initial time
-    const [h, m] = selectedTime.split(":").map(Number);
-    const initialHour = h > 12 ? h - 12 : h === 0 ? 12 : h;
-    const initialPeriod = h >= 12 ? "PM" : "AM";
+    // --- Initial Time Parsing ---
+    let initialHour = 9;
+    let initialMinute = 0;
+    let initialPeriod = "AM";
+
+    if (selectedTime.includes(":") && !selectedTime.includes(" ")) {
+      // Handle "HH:mm" (24-hour) format
+      const [h, m] = selectedTime.split(":").map(Number);
+      initialHour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+      initialMinute = m;
+      initialPeriod = h >= 12 ? "PM" : "AM";
+    } else if (selectedTime.includes(" ")) {
+      // Handle "H:mm AM/PM" format
+      const [timePart, periodPart] = selectedTime.split(" ");
+      const [h, m] = timePart.split(":").map(Number);
+      initialHour = h;
+      initialMinute = m;
+      initialPeriod = periodPart.toUpperCase() === "PM" ? "PM" : "AM";
+    }
 
     // Store the wheel values separately
-    const [wheelHour, setWheelHour] = useState(initialHour);
-    const [wheelMinute, setWheelMinute] = useState(m);
-    const [wheelPeriod, setWheelPeriod] = useState(initialPeriod);
+    const [wheelHour, setWheelHour] = useState<number>(initialHour);
+    const [wheelMinute, setWheelMinute] = useState<number>(initialMinute);
+    const [wheelPeriod, setWheelPeriod] = useState<string>(initialPeriod);
 
     const hours = Array.from({ length: 12 }, (_, i) => i + 1);
     const minutes = Array.from({ length: 60 }, (_, i) => i);
@@ -61,6 +76,7 @@ const CustomTimePicker = forwardRef<BottomSheet, TimePickerProps>(
     );
 
     const handleConfirm = () => {
+      // Logic for 24-hour time (not used in final output, but useful for logic)
       let hour24 = wheelHour;
       if (wheelPeriod === "PM" && wheelHour !== 12) {
         hour24 = wheelHour + 12;
@@ -68,11 +84,14 @@ const CustomTimePicker = forwardRef<BottomSheet, TimePickerProps>(
         hour24 = 0;
       }
 
-      const timeString = `${hour24.toString().padStart(2, "0")}:${wheelMinute
+      // --- REVISED: Construct time string to include AM/PM ---
+      const timeStringWithPeriod = `${wheelHour.toString()}:${wheelMinute
         .toString()
-        .padStart(2, "0")}`;
+        .padStart(2, "0")} ${wheelPeriod}`;
+      // --------------------------------------------------------
 
-      onTimeSelect?.(timeString);
+      // Pass the time string with AM/PM to the parent state
+      onTimeSelect?.(timeStringWithPeriod);
 
       if (ref && "current" in ref && ref.current) {
         ref.current.close();
@@ -149,6 +168,7 @@ const CustomTimePicker = forwardRef<BottomSheet, TimePickerProps>(
                   data={minutes}
                   value={wheelMinute}
                   onValueChange={setWheelMinute}
+                  unit="min"
                 />
               </View>
 
@@ -201,14 +221,16 @@ const WheelPicker = ({
     }
   }, [valueIndex]);
 
-  const handleMomentumScrollEnd = (event: any) => {
+  // --- REVISED: Centralize selection logic to MomentumScrollEnd and ScrollEndDrag ---
+  const handleSelection = (event: any) => {
     const yOffset = event.nativeEvent.contentOffset.y;
     const index = Math.round(yOffset / ITEM_HEIGHT);
     const clampedIndex = Math.max(0, Math.min(index, data.length - 1));
 
-    setDisplayIndex(clampedIndex);
+    // Update the state with the final selected value
     onValueChange(data[clampedIndex]);
 
+    // Ensure the scroll snaps perfectly
     scrollViewRef.current?.scrollTo({
       y: clampedIndex * ITEM_HEIGHT,
       animated: true,
@@ -219,8 +241,10 @@ const WheelPicker = ({
     const yOffset = event.nativeEvent.contentOffset.y;
     const index = Math.round(yOffset / ITEM_HEIGHT);
     const clampedIndex = Math.max(0, Math.min(index, data.length - 1));
+    // Only update the display index here for visual feedback
     setDisplayIndex(clampedIndex);
   };
+  // ---------------------------------------------------------------------------------
 
   return (
     <View style={{ height: ITEM_HEIGHT * VISIBLE_ITEMS, overflow: "hidden" }}>
@@ -243,7 +267,10 @@ const WheelPicker = ({
         showsVerticalScrollIndicator={false}
         snapToInterval={ITEM_HEIGHT}
         decelerationRate="fast"
-        onMomentumScrollEnd={handleMomentumScrollEnd}
+        // --- REVISED: Use a single function for final selection ---
+        onMomentumScrollEnd={handleSelection}
+        onScrollEndDrag={handleSelection}
+        // ----------------------------------------------------------
         onScroll={handleScroll}
         scrollEventThrottle={16}
         contentContainerStyle={{

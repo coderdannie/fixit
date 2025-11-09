@@ -26,6 +26,11 @@ export const Endpoints = {
   //jobs
   ADD_NOTE: "/mechanics/notes",
   GET_ALL_NOTES: "/mechanics/notes",
+
+  //Customer support chat
+  SUPPORT_CHAT_START: "/support-chat/start",
+  SUPPORT_CHAT_SEND: "/support-chat/send",
+  SUPPORT_CHAT_HISTORY: "/support-chat/history",
 };
 
 export const RtkqTagEnum = {
@@ -53,4 +58,8 @@ export const RtkqTagEnum = {
   ADD_NOTE: "ADD_NOTE",
   GET_ALL_NOTES: "GET_ALL_NOTES",
   GET_NOTE_DETAILS: "GET_NOTE_DETAILS",
+
+  //customer chat support
+  CHAT_SESSION: "CHAT_SESSION",
+  CHAT_MESSAGES: "CHAT_MESSAGES",
 } as const;

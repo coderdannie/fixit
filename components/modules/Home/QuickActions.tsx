@@ -5,6 +5,7 @@ import {
   SupportIcon,
 } from "@/assets/images/Icon";
 import BluetoothScanner from "@/components/common/BluetoothScanner";
+import { chatData } from "@/components/common/constant";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -27,6 +28,14 @@ const QuickActions = () => {
 
   const handleNavigateToChats = () => {
     router.push("/home/chats");
+  };
+
+  const handleNavigateToSupport = () => {
+    if (chatData.length > 0) {
+      router.push("/home/support");
+    } else {
+      router.push("/home/support/add");
+    }
   };
 
   const handleDiagnosticsScan = () => {
@@ -124,7 +133,10 @@ const QuickActions = () => {
           </TouchableOpacity>
 
           {/* Customer Support Button */}
-          <TouchableOpacity className="justify-center items-center">
+          <TouchableOpacity
+            className="justify-center items-center"
+            onPress={handleNavigateToSupport}
+          >
             <View className="bg-[#EAF0FB] flex justify-center items-center w-[40px] p-[10px] rounded-full">
               <SupportIcon />
             </View>

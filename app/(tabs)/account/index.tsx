@@ -31,7 +31,7 @@ const Account = () => {
       icon: "bell",
       iconType: "Feather",
       label: "Notification settings",
-      route: "/notification-settings",
+      route: "/(tabs)/account/notification-settings",
     },
     {
       id: 2,
@@ -65,8 +65,7 @@ const Account = () => {
   };
 
   const handleDeleteAccount = () => {
-    // Handle delete account logic
-    console.log("Delete account");
+    router.push("/(tabs)/account/delete-account");
   };
 
   const handleLogOut = async () => {
@@ -78,16 +77,18 @@ const Account = () => {
     } catch (error: any) {
       const errorMessage = error?.data?.message?.toLowerCase().trim();
 
+      console.log(errorMessage);
       // If token expired, clear auth and redirect
       if (
-        errorMessage?.includes("token") &&
-        errorMessage?.includes("expired")
+        errorMessage?.includes("invalid token") ||
+        errorMessage?.includes("token expired")
       ) {
+        console.log("errorMsg", errorMessage);
         dispatch(clearAuth());
         router.replace("/(auth)/login");
         return; // Exit early, don't show error
       }
-      console.log("error", error?.data?.message);
+
       showError(
         "Error",
         error?.data?.message || "Failed to log out. Please try again."

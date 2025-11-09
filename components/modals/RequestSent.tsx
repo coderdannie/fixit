@@ -6,12 +6,18 @@ interface RequestSentModalProps {
   visible: boolean;
   onClose: () => void;
   handleNavigate: () => void;
+  title?: string;
+  desc?: string;
+  btnText?: string;
 }
 
 const RequestSentModal: React.FC<RequestSentModalProps> = ({
   visible,
   onClose,
   handleNavigate,
+  title = "Request Sent",
+  desc = " Your request for an additional 4 days has been submitted. You'll be notified once it's approved.",
+  btnText = "Return to Dashboard",
 }) => {
   return (
     <Modal
@@ -31,16 +37,15 @@ const RequestSentModal: React.FC<RequestSentModalProps> = ({
           </View>
 
           {/* Title */}
-          <Text className="text-xl font-bold text-gray-900 mb-3">
-            Request Sent
+          <Text className="text-xl semibold text-center text-gray-900 mb-3">
+            {title}
           </Text>
 
           {/* Description */}
           <Text className="text-sm text-[#666666] text-center mb-8 leading-5">
-            Your request for an additional 4 days has been submitted. You'll be
-            notified once it's approved.
+            {desc}
           </Text>
-          <CustomButton title="Return to Dasboard" onPress={handleNavigate} />
+          <CustomButton title={btnText} onPress={handleNavigate} />
         </View>
       </View>
     </Modal>

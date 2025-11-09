@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/splash-icon.png",
     "scheme": "fixit",
+    "jsEngine": "jsc",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -47,7 +48,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.297264750687-u2end2iq68hj86h2a7pngics0tmq6m4u"
+          "iosUrlScheme": "com.googleusercontent.apps.271975408269-j3brq3a0tjp6jluhmo55otjh6n0jvmvp"
         }
       ],
       "expo-web-browser"
@@ -61,6 +62,12 @@
       "eas": {
         "projectId": "9d4d42b2-e7a1-4445-83aa-d724489748cd"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9d4d42b2-e7a1-4445-83aa-d724489748cd"
     }
   }
 }

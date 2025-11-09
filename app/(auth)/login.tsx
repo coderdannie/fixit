@@ -19,7 +19,14 @@ import {
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const Login = () => {
   const { updateAuthUser } = useAuthUser();
@@ -92,13 +99,30 @@ const Login = () => {
           idToken,
         }).unwrap();
         const user = googleRes.data.user;
+        const steps = googleRes?.data?.onboarding?.steps;
 
-        console.log("user", user);
+        console.log("user", googleRes);
         updateAuthUser({
-          data: user,
-          accessToken: googleRes.data.accessToken,
+          data: googleRes?.data,
+          accessToken: googleRes.data.token.accessToken,
           expiresIn: googleRes.data.expiresIn,
         });
+
+        if (googleRes.data?.onboarding?.role === "MECHANIC") {
+          if (!steps?.selectUserRole?.completed) {
+            router.push("/(auth)/account_type");
+          } else if (!steps?.mechanicProfileSetup?.completed) {
+            router.push("/mechanic-profile-setup");
+          } else if (!steps?.mechanicProfilePicture?.completed) {
+            router.push("/upload-profile-picture");
+          } else if (steps?.mechanicServices?.completed) {
+            router.push("/service");
+          } else if (!steps?.userSettings?.completed) {
+            router.push("/stay_connected");
+          } else {
+            router.push("/(tabs)/home");
+          }
+        }
       } catch (apiError: any) {
         console.error("API error:", apiError);
         showError(
@@ -128,15 +152,11 @@ const Login = () => {
   };
 
   const onLoginPress = () => {
-    console.log("Navigate to register");
     router.push("/(auth)/register");
-    // Navigate to login screen
   };
 
   const onForgotPassPress = () => {
-    console.log("Navigate to register");
     router.push("/(auth)/forgot_password");
-    // Navigate to login screen
   };
   return (
     <AuthLayout>
@@ -206,10 +226,33 @@ const Login = () => {
             }}
             activeOpacity={0.8}
           >
-            <Image source={require("../../assets/images/google.png")} />
-            <Text className="ml-3 text-base  text-textPrimary">
-              Sign up with Google
-            </Text>
+            {isGoogleloading ? (
+              <>
+                <ActivityIndicator color={"#F23A4A"} size="small" />
+                <Text
+                  className={` ${
+                    isTablet ? "text-xl" : "text-base"
+                  } font-semibold text-textPrimary text-center `}
+                >
+                  Please wait...
+                </Text>
+              </>
+            ) : (
+              <>
+                <Image
+                  source={require("../../assets/images/google.png")}
+                  className={`${isTablet ? "" : "w-6 h-6"}`}
+                  resizeMode="cover"
+                />
+                <Text
+                  className={` ${
+                    isTablet ? "text-xl" : "text-base"
+                  } ml-3 text-base  text-textPrimary font-semibold`}
+                >
+                  Continue With Google
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
 

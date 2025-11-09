@@ -1,32 +1,33 @@
 import { NoActiveIcon } from "@/assets/images/Icon";
 import JobCard from "@/components/common/JobCard";
+import CustomButton from "@/components/CustomButton";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
-const jobsData = [
-  {
-    id: "1",
-    vehicle: "Toyota Corolla 2015",
-    jobType: "AC Repair",
-    progress: 60,
-    status: "In progress",
-  },
-  {
-    id: "2",
-    vehicle: "Kia Rio 2017",
-    jobType: "Tire service",
-    progress: 40,
-    status: "In progress",
-  },
-  {
-    id: "3",
-    vehicle: "Kia Rio 2017",
-    jobType: "Tire service",
-    progress: 40,
-    status: "In progress",
-  },
+const jobsData: any[] = [
+  // {
+  //   id: "1",
+  //   vehicle: "Toyota Corolla 2015",
+  //   jobType: "AC Repair",
+  //   progress: 60,
+  //   status: "In progress",
+  // },
+  // {
+  //   id: "2",
+  //   vehicle: "Kia Rio 2017",
+  //   jobType: "Tire service",
+  //   progress: 40,
+  //   status: "In progress",
+  // },
+  // {
+  //   id: "3",
+  //   vehicle: "Kia Rio 2017",
+  //   jobType: "Tire service",
+  //   progress: 40,
+  //   status: "In progress",
+  // },
 ];
 
 export default function ActiveJobsList() {
@@ -34,6 +35,10 @@ export default function ActiveJobsList() {
 
   const handleViewDetails = (id: string) => {
     router.push(`/(tabs)/home/jobs/${id}`);
+  };
+
+  const handleNavigateKyc = () => {
+    router.push("/home/verify-kyc");
   };
 
   const handleViewActiveJobs = () => {
@@ -49,7 +54,7 @@ export default function ActiveJobsList() {
         >
           Active Jobs
         </Text>
-        {jobsData.length && (
+        {jobsData.length > 0 && (
           <TouchableOpacity onPress={handleViewActiveJobs}>
             <Text
               className={`text-[#666666] ${isTablet ? "text-xl" : "text-base"}`}
@@ -81,6 +86,9 @@ export default function ActiveJobsList() {
           <Text className={`${isTablet ? "text-base" : "text-sm"}`}>
             When a customer assigns you a repair, it will appear here.
           </Text>
+          <View className="mt-[10px] w-[40%]">
+            <CustomButton title="Verify kyc" onPress={handleNavigateKyc} />
+          </View>
         </View>
       )}
     </View>
