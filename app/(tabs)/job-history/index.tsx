@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
-  StyleSheet, // Added for native styling of the empty state
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -42,48 +42,48 @@ const JobHistory = () => {
   // const jobs = [];
 
   const jobs = [
-    // {
-    //   id: 1,
-    //   vehicle: "Toyota Corolla 2015",
-    //   jobType: "Brake Repair",
-    //   date: "20th August 2025, 4:05pm",
-    //   status: "Completed",
-    // },
-    // {
-    //   id: 2,
-    //   vehicle: "Kia Rio 2017",
-    //   jobType: "Cooling System Repair",
-    //   date: "19th August 2025, 1:15pm",
-    //   status: "Cancelled",
-    // },
-    // {
-    //   id: 3,
-    //   vehicle: "Ford Explorer 2018",
-    //   jobType: "Oil Change",
-    //   date: "17th August 2025, 10:25am",
-    //   status: "Completed",
-    // },
-    // {
-    //   id: 4,
-    //   vehicle: "Toyota Corolla 2015",
-    //   jobType: "AC Repair",
-    //   date: "1st August 2025, 3:07pm",
-    //   status: "Cancelled",
-    // },
-    // {
-    //   id: 5,
-    //   vehicle: "Toyota Corolla 2015",
-    //   jobType: "AC Repair",
-    //   date: "1st August 2025, 3:07pm",
-    //   status: "Cancelled",
-    // },
-    // {
-    //   id: 6,
-    //   vehicle: "Toyota Corolla 2015",
-    //   jobType: "AC Repair",
-    //   date: "1st August 2025, 3:07pm",
-    //   status: "Cancelled",
-    // },
+    {
+      id: 1,
+      vehicle: "Toyota Corolla 2015",
+      jobType: "Brake Repair",
+      date: "20th August 2025, 4:05pm",
+      status: "Completed",
+    },
+    {
+      id: 2,
+      vehicle: "Kia Rio 2017",
+      jobType: "Cooling System Repair",
+      date: "19th August 2025, 1:15pm",
+      status: "Cancelled",
+    },
+    {
+      id: 3,
+      vehicle: "Ford Explorer 2018",
+      jobType: "Oil Change",
+      date: "17th August 2025, 10:25am",
+      status: "Completed",
+    },
+    {
+      id: 4,
+      vehicle: "Toyota Corolla 2015",
+      jobType: "AC Repair",
+      date: "1st August 2025, 3:07pm",
+      status: "Cancelled",
+    },
+    {
+      id: 5,
+      vehicle: "Toyota Corolla 2015",
+      jobType: "AC Repair",
+      date: "1st August 2025, 3:07pm",
+      status: "Cancelled",
+    },
+    {
+      id: 6,
+      vehicle: "Toyota Corolla 2015",
+      jobType: "AC Repair",
+      date: "1st August 2025, 3:07pm",
+      status: "Cancelled",
+    },
   ];
 
   const filteredJobs = jobs.filter(
