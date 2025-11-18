@@ -7,10 +7,12 @@ import AuthLayout from "@/layout/AuthLayout";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 
 const VerifyEmail = () => {
+  const { t } = useTranslation();
   const [otp, setOtp] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [countdown, setCountdown] = useState<number>(0);
@@ -44,8 +46,6 @@ const VerifyEmail = () => {
     return () => clearInterval(intervalId);
   }, [isTimerActive]);
 
-  console.log("active", email);
-
   const formatCountdown = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
@@ -64,7 +64,7 @@ const VerifyEmail = () => {
 
   const verifyCode = async () => {
     if (otp.length !== 4) {
-      setError("Please enter a complete 4-digit code");
+      setError(t("verifyCodeScreen.incompleteCodeError")); // <-- Translated Error
       return;
     }
 
@@ -75,7 +75,10 @@ const VerifyEmail = () => {
       }).unwrap();
 
       if (response) {
-        showSuccess("Success", response.message || "Verification successful");
+        showSuccess(
+          t("common.success"), // <-- Translated Success Title
+          response.message || t("verifyCodeScreen.verificationSuccess") // <-- Translated Message
+        );
 
         if (type === "password") {
           handleProceed();
@@ -83,14 +86,15 @@ const VerifyEmail = () => {
           setIsVisible(true);
         }
       } else {
-        showError("Error", `Unexpected status: ${response.status}`);
+        // Fallback for non-error status
+        showError(t("common.error"), t("common.somethingWentWrong"));
       }
     } catch (error: any) {
       showError(
-        "Error",
-        error?.data?.message || "Invalid verification code. Please try again."
+        t("common.error"),
+        error?.data?.message || t("verifyCodeScreen.invalidCodeError") // <-- Translated Error
       );
-      setError(error?.data?.message || "Invalid code");
+      setError(error?.data?.message || t("verifyCodeScreen.invalidCodeError")); // <-- Translated Error
     }
   };
 
@@ -104,9 +108,8 @@ const VerifyEmail = () => {
 
       if (response) {
         showSuccess(
-          "Code Resent",
-          response.message ||
-            "A new verification code has been sent to your email"
+          t("verifyCodeScreen.codeResentTitle"), // <-- Translated Title
+          response.message || t("verifyCodeScreen.codeResentSuccess") // <-- Translated Message
         );
         setIsTimerActive(true);
         setCountdown(60);
@@ -115,8 +118,8 @@ const VerifyEmail = () => {
       }
     } catch (error: any) {
       showError(
-        "Error",
-        error?.data?.message || "Failed to resend code. Please try again."
+        t("common.error"),
+        error?.data?.message || t("verifyCodeScreen.resendFailed") // <-- Translated Error
       );
     }
   };
@@ -128,9 +131,19 @@ const VerifyEmail = () => {
 
   const handleOtpFilled = (text: string) => {
     setOtp(text);
-    // Optionally auto-verify when filled
-    // verifyCode();
+    // verifyCode(); // Optional: auto-verify
   };
+
+  // Determine Title and Instruction Text based on 'type'
+  const title =
+    type === "password"
+      ? t("verifyCodeScreen.resetPasswordTitle")
+      : t("verifyCodeScreen.verificationTitle");
+
+  const instruction =
+    type === "password"
+      ? t("verifyCodeScreen.resetInstruction", { email: email })
+      : t("verifyCodeScreen.verificationInstruction", { email: email });
 
   return (
     <AuthLayout back>
@@ -140,14 +153,12 @@ const VerifyEmail = () => {
             isTablet ? "text-3xl" : "text-2xl"
           } font-semibold text-textPrimary`}
         >
-          {type === "password" ? "Reset Password" : "Verification"}
+          {title} {/* <-- Translated Title */}
         </Text>
         <Text
           className={`${isTablet ? "text-xl" : "text-lg"} pt-2 text-[#666666] mb-5`}
         >
-          {type === "password"
-            ? `Please enter the 4-digit code we sent to ${email} to reset your password`
-            : `For your security, please enter the 4-digit code we sent to ${email}`}
+          {instruction} {/* <-- Translated Instruction */}
         </Text>
 
         <View className="w-full">
@@ -203,7 +214,10 @@ const VerifyEmail = () => {
 
         {countdown > 0 && (
           <View className="flex-row items-center justify-center">
-            <Text className="text-[#666666]">You can resend code in </Text>
+            <Text className="text-[#666666]">
+              {t("verifyCodeScreen.resendTimerLabel")}{" "}
+              {/* <-- Translated Timer Label */}
+            </Text>
             <Text className="text-primary font-medium">
               {formatCountdown(countdown)}
             </Text>
@@ -217,7 +231,7 @@ const VerifyEmail = () => {
               isTimerActive ? "text-gray-400" : "text-primary"
             }`}
           >
-            Resend Code
+            {t("verifyCodeScreen.resendButton")} {/* <-- Translated Button */}
           </Text>
           {isResending && (
             <ActivityIndicator size="small" color="#2964C2" className="ml-2" />
@@ -232,20 +246,20 @@ const VerifyEmail = () => {
           <CustomButton
             disabled={isButtonDisabled()}
             onPress={verifyCode}
-            title="Verify"
+            title={t("verifyCodeScreen.verifyButton")}
             loading={isLoading}
           />
         </View>
-      </View>
 
-      <SuccessModal
-        isVisible={isVisible}
-        btnText="Log In"
-        title="Email Verification Successful"
-        desc="Your email has been successfully verified. You can now log in and start using your account"
-        onClose={() => setIsVisible(false)}
-        onProceed={() => router.push("/(auth)/login")}
-      />
+        <SuccessModal
+          isVisible={isVisible}
+          btnText={t("auth.logIn")}
+          title={t("verifyCodeScreen.modalSuccessTitle")}
+          desc={t("verifyCodeScreen.modalSuccessDesc")}
+          onClose={() => setIsVisible(false)}
+          onProceed={() => router.push("/(auth)/login")}
+        />
+      </View>
     </AuthLayout>
   );
 };

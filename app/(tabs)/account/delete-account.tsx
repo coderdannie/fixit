@@ -2,20 +2,14 @@ import BackBtn from "@/components/BackBtn";
 import CustomButton from "@/components/CustomButton";
 import Icon from "@/components/Icon";
 
-import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
+import DeleteAccountBottomSheet from "@/components/modals/DeleteAccountModal";
 import RequestSentModal from "@/components/modals/RequestSent";
 import { isTablet } from "@/utils/utils";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 
-import React, { useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import React, { useRef, useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface DeleteReason {
@@ -26,12 +20,12 @@ interface DeleteReason {
 const DeleteAccount: React.FC = () => {
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [otherReason, setOtherReason] = useState<string>("");
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [visibile, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const deleteAccountRef = useRef<BottomSheet>(null);
 
   const router = useRouter();
   const reasons: DeleteReason[] = [
-    { id: "no-longer-using", label: "I'm no longer using FQRT" },
+    { id: "no-longer-using", label: "I'm no longer using FIXIT" },
     { id: "another-account", label: "I created another account by mistake" },
     { id: "payments-issue", label: "Had issues with payments or withdrawals" },
     { id: "better-alternative", label: "I found a better alternative" },
@@ -44,13 +38,10 @@ const DeleteAccount: React.FC = () => {
 
   const handleContinue = () => {
     if (selectedReason) {
-      setShowModal(true);
+      deleteAccountRef.current?.expand();
     }
   };
 
-  const handleOpen = () => {
-    setVisible(true);
-  };
   const handleClose = () => {
     setVisible(false);
   };
@@ -67,7 +58,6 @@ const DeleteAccount: React.FC = () => {
     if (selectedReason === "others") {
       console.log("Other reason:", otherReason);
     }
-    setShowModal(false);
     setVisible(true);
     // Add your delete account logic here
   };
@@ -80,11 +70,7 @@ const DeleteAccount: React.FC = () => {
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom", "left"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          isTablet
-            ? styles.contentContainerTablet
-            : styles.contentContainerMobile
-        }
+        className={isTablet ? "px-10 pb-10" : "px-6 pb-10"}
       >
         <View className="pt-6 pb-4">
           <BackBtn isMarginBottom />
@@ -109,7 +95,7 @@ const DeleteAccount: React.FC = () => {
           </Text>
         </View>
 
-        <View className="mb-6 bg-white rounded-lg" style={styles.listContainer}>
+        <View className="mb-6 bg-white rounded-lg shadow-sm shadow-black/5 elevation-5">
           {reasons.map((reason) => (
             <View key={reason.id}>
               <Pressable
@@ -164,12 +150,11 @@ const DeleteAccount: React.FC = () => {
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
-                    className={`border border-[#E6E6E6] rounded-lg p-3 ${
+                    className={`border border-[#E6E6E6] rounded-lg p-3 font-system ${
                       isTablet
                         ? "text-base min-h-[120px]"
                         : "text-sm min-h-[100px]"
                     }`}
-                    style={styles.textInput}
                   />
                 </View>
               )}
@@ -183,23 +168,21 @@ const DeleteAccount: React.FC = () => {
           title="Continue"
           onPress={handleContinue}
           disabled={isButtonDisabled}
-          containerClassName="bg-[#CC0000]"
-          isCustomDisabled
         />
       </View>
 
-      {/* Delete Account Modal */}
-      <DeleteAccountModal
-        visible={showModal}
-        onClose={() => setShowModal(false)}
+      {/* Delete Account Bottom Sheet */}
+      <DeleteAccountBottomSheet
+        ref={deleteAccountRef}
         onConfirm={handleConfirmDelete}
+        onClose={() => console.log("Bottom sheet closed")}
       />
 
       <RequestSentModal
         title="Your FIXIT account has been deleted successfully!"
-        desc="We’re sorry to see you go"
+        desc="We're sorry to see you go"
         btnText="Return to Sign up"
-        visible={visibile}
+        visible={visible}
         onClose={handleClose}
         handleNavigate={handleNavigate}
       />
@@ -208,27 +191,3 @@ const DeleteAccount: React.FC = () => {
 };
 
 export default DeleteAccount;
-
-const styles = StyleSheet.create({
-  contentContainerTablet: {
-    paddingHorizontal: 40,
-    paddingBottom: 40,
-  },
-  contentContainerMobile: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  listContainer: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  textInput: {
-    fontFamily: "System",
-  },
-});

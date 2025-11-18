@@ -5,21 +5,39 @@ import CustomButton from "@/components/CustomButton";
 import CustomDropdown from "@/components/CustomDropdown";
 import Icon from "@/components/Icon";
 import useToast from "@/hooks/useToast";
+import i18n from "@/src/i18n/config";
+import { RootState } from "@/store"; // ADD THIS
+import { useAppDispatch } from "@/store/redux/hooks";
+import { changeLanguage } from "@/store/slices/languageSlice"; // ADD THIS
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next"; // ADD THIS
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux"; // ADD THIS
 
 const RoleSelection = () => {
+  const { t } = useTranslation(); // ADD THIS
+  const dispatch = useAppDispatch();
+  const currentLanguage = useSelector(
+    (state: RootState) => state.language.currentLanguage
+  ); // ADD THIS
+
   const { showSuccess, showError } = useToast();
 
   const [selectedRole, setSelectedRole] = useState<string>("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<string>(currentLanguage);
 
   const [createAccountType, { isLoading }] = useCreateAccountTypeMutation();
 
   const router = useRouter();
+
+  // SYNC with Redux on mount
+  useEffect(() => {
+    setSelectedLanguage(currentLanguage);
+  }, [currentLanguage]);
 
   const handleRoleSelect = (roleId: string) => {
     setSelectedRole(roleId);
@@ -32,18 +50,25 @@ const RoleSelection = () => {
       }).unwrap();
 
       if (res) {
-        showSuccess("Success", res.message || "Account created successfully");
         if (selectedRole.includes("mechanic")) {
           router.push("/(auth)/mechanic-profile-setup");
         }
       }
     } catch (error: any) {
-      showError("Error", error?.data?.message || "Something went wrong");
+      showError("Error", error?.data?.message || t("roleSelection.error"));
     }
   };
 
+  useEffect(() => {
+    console.log("🌍 Current language from Redux:", currentLanguage);
+    console.log("🌍 Current i18n language:", i18n.language);
+    console.log("🌍 Translation test:", t("roleSelection.title"));
+  }, [currentLanguage, t]);
+
   const handleLanguageSelect = (language: string) => {
+    console.log("👆 User selected language:", language);
     setSelectedLanguage(language);
+    dispatch(changeLanguage(language));
   };
 
   return (
@@ -61,18 +86,17 @@ const RoleSelection = () => {
             </View>
           </View>
 
-          {/* Title and Description */}
+          {/* Title and Description - NOW TRANSLATED */}
           <View className="mb-8">
             <Text
               className={`${
                 isTablet ? "text-3xl" : "text-2xl"
               } font-semibold text-textPrimary mb-2`}
             >
-              How will you be using Fixit?
+              {t("roleSelection.title")}
             </Text>
             <Text className="text-base text-[#666666] leading-6">
-              Choose how you will use FIXIT. You can change your selection
-              anytime in your profile settings.
+              {t("roleSelection.description")}
             </Text>
           </View>
 
@@ -116,13 +140,13 @@ const RoleSelection = () => {
                       )}
                     </View>
 
-                    {/* Content */}
+                    {/* Content - NOW TRANSLATED */}
                     <View className="flex-1">
                       <Text className="text-lg font-semibold text-gray-900 mb-1">
-                        {role.title}
+                        {t(`roleSelection.roles.${role.id}.title` as any)}
                       </Text>
                       <Text className="text-sm text-gray-600 leading-5">
-                        {role.description}
+                        {t(`roleSelection.roles.${role.id}.description` as any)}
                       </Text>
                     </View>
                   </View>
@@ -155,7 +179,7 @@ const RoleSelection = () => {
       <View className={`${isTablet ? "px-10" : "px-6"} pb-8 bg-white`}>
         <CustomButton
           onPress={handleContinue}
-          title="Proceed"
+          title={t("roleSelection.proceed")}
           disabled={!selectedRole}
           loading={isLoading}
         />

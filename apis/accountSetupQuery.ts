@@ -30,7 +30,10 @@ export const accountSetupQuery = api.injectEndpoints({
       invalidatesTags: [{ type: RtkqTagEnum.GET_ONBOARDING_STAGE }],
     }),
 
-    addServices: builder.mutation<any, { services: string[] }>({
+    addServices: builder.mutation<
+      any,
+      { serviceIds: string[]; specializationIds: string[] }
+    >({
       query: (body) => ({
         url: Endpoints.ADD_SERVICES,
         method: "POST",
@@ -50,6 +53,20 @@ export const accountSetupQuery = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: RtkqTagEnum.GET_ONBOARDING_STAGE }],
     }),
+    getSpecialization: builder.query<any, void>({
+      query: () => ({
+        url: Endpoints.GET_SPECIALIZATION,
+        method: "GET",
+      }),
+      providesTags: [{ type: RtkqTagEnum.GET_SPECIALIZATION }],
+    }),
+    getServices: builder.query<any, void>({
+      query: () => ({
+        url: Endpoints.GET_SERVICES,
+        method: "GET",
+      }),
+      providesTags: [{ type: RtkqTagEnum.GET_SERVICES }],
+    }),
   }),
 });
 
@@ -59,4 +76,6 @@ export const {
   useMechanicProfileSetupMutation,
   useAddServicesMutation,
   useUserSettingsMutation,
+  useGetSpecializationQuery,
+  useGetServicesQuery,
 } = accountSetupQuery;

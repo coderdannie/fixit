@@ -1,9 +1,11 @@
+import { useGetAllConversationsQuery } from "@/apis/aiChatQuery";
 import BackBtn from "@/components/BackBtn";
-import Icon from "@/components/Icon";
+import Icon, { DeleteIcon } from "@/components/Icon";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   Pressable,
@@ -40,57 +42,103 @@ const ChatHistory = () => {
     null
   );
 
-  // Sample data - replace with your actual data
-  const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([
-    {
-      id: "1",
-      question:
-        "What could the issue be, if a toyota corolla 2015 model's Ac suddenly stops working...",
-      timestamp: "1:10pm",
-      date: "Today",
-    },
-    {
-      id: "2",
-      question:
-        "What could the issue be, if a toyota corolla 2015 model's Ac suddenly stops working...",
-      timestamp: "1:10pm",
-      date: "Today",
-    },
-    {
-      id: "3",
-      question:
-        "What could the issue be, if a toyota corolla 2015 model's Ac suddenly stops working...",
-      timestamp: "1:10pm",
-      date: "Today",
-    },
-    {
-      id: "4",
-      question:
-        "What could the issue be, if a toyota corolla 2015 model's Ac suddenly stops working...",
-      timestamp: "1:10pm",
-      date: "Yesterday",
-    },
-    {
-      id: "5",
-      question:
-        "What could the issue be, if a toyota corolla 2015 model's Ac suddenly stops working...",
-      timestamp: "1:10pm",
-      date: "Yesterday",
-    },
-  ]);
+  // State for pagination
+  const [cursorCreatedAt, setCursorCreatedAt] = useState<string | undefined>();
+  const [cursorId, setCursorId] = useState<string | undefined>();
+
+  // Helper function to format date
+  const formatMessageDate = (dateString: string) => {
+    const messageDate = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const isToday = messageDate.toDateString() === today.toDateString();
+    const isYesterday = messageDate.toDateString() === yesterday.toDateString();
+
+    if (isToday) return "Today";
+    if (isYesterday) return "Yesterday";
+
+    return messageDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  // Fetch conversations using RTK Query
+  const {
+    data: conversationsData,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+  } = useGetAllConversationsQuery({
+    limit: 20,
+    type: "FRONTEND_BACKEND_AI",
+    ...(cursorCreatedAt && { cursorCreatedAt }),
+    ...(cursorId && { cursorId }),
+  });
+
+  // Check if there are more conversations to load
+  const hasMoreOlder = conversationsData?.data?.hasMoreOlder ?? false;
+
+  // Transform API data to chat history format
+  const chatHistory = useMemo(() => {
+    if (!conversationsData?.data?.items) return [];
+
+    return conversationsData.data.items
+      .filter((conversation) => conversation.lastMessage)
+      .map((conversation) => {
+        const lastMessage = conversation.lastMessage;
+        const messagePreview = lastMessage?.text
+          ? lastMessage.text.split(".")[0] + "..."
+          : "No message content";
+
+        return {
+          id: conversation.id,
+          question: messagePreview.substring(0, 100),
+          timestamp: new Date(conversation.lastMessageAt).toLocaleTimeString(
+            "en-US",
+            {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            }
+          ),
+          date: formatMessageDate(conversation.lastMessageAt),
+        };
+      });
+  }, [conversationsData]);
+
+  // Load more conversations
+  const loadMoreConversations = useCallback(() => {
+    if (
+      !isLoading &&
+      !isFetching &&
+      hasMoreOlder &&
+      conversationsData?.data?.nextOlderCursor
+    ) {
+      const cursor = conversationsData.data.nextOlderCursor;
+      setCursorCreatedAt(cursor.createdAt);
+      setCursorId(cursor.id);
+    }
+  }, [isLoading, isFetching, hasMoreOlder, conversationsData]);
 
   const handleDeletePress = (item: ChatHistoryItem) => {
     setSelectedItem(item);
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedItem) {
-      setChatHistory((prev) =>
-        prev.filter((item) => item.id !== selectedItem.id)
-      );
+      // TODO: Implement delete API call
       setShowDeleteModal(false);
       setSelectedItem(null);
+      // Reset cursors and refetch
+      setCursorCreatedAt(undefined);
+      setCursorId(undefined);
+      refetch();
     }
   };
 
@@ -100,35 +148,46 @@ const ChatHistory = () => {
   };
 
   const handleCardPress = (item: ChatHistoryItem) => {
-    // Navigate to chat detail - adjust route as needed
     router.push({
       pathname: "/(tabs)/ai-copilot",
-      params: { chatId: item.id },
+      params: { conversationId: item.id },
     });
   };
 
-  const handleClearHistory = () => {
-    // Implement clear all history functionality
-    setChatHistory([]);
+  const handleClearHistory = async () => {
+    // TODO: Implement clear all history API call
+    setCursorCreatedAt(undefined);
+    setCursorId(undefined);
+    refetch();
   };
 
-  const filteredHistory = chatHistory.filter((item) =>
-    item.question.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleRefresh = () => {
+    setCursorCreatedAt(undefined);
+    setCursorId(undefined);
+    refetch();
+  };
+
+  const filteredHistory = useMemo(() => {
+    return chatHistory.filter((item) =>
+      item.question.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [chatHistory, searchQuery]);
 
   // Group items by date
-  const groupedData = filteredHistory.reduce(
-    (acc, item) => {
-      const existing = acc.find((group) => group.title === item.date);
-      if (existing) {
-        existing.data.push(item);
-      } else {
-        acc.push({ title: item.date, data: [item] });
-      }
-      return acc;
-    },
-    [] as { title: string; data: ChatHistoryItem[] }[]
-  );
+  const groupedData = useMemo(() => {
+    return filteredHistory.reduce(
+      (acc, item) => {
+        const existing = acc.find((group) => group.title === item.date);
+        if (existing) {
+          existing.data.push(item);
+        } else {
+          acc.push({ title: item.date, data: [item] });
+        }
+        return acc;
+      },
+      [] as { title: string; data: ChatHistoryItem[] }[]
+    );
+  }, [filteredHistory]);
 
   const renderItem = ({ item }: { item: ChatHistoryItem }) => (
     <Pressable
@@ -159,43 +218,79 @@ const ChatHistory = () => {
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           className="p-2"
         >
-          <Icon
-            type="MaterialCommunityIcons"
-            name="delete-outline"
-            size={22}
-            color="#EF4444"
-          />
+          <DeleteIcon />
         </TouchableOpacity>
       </View>
     </Pressable>
   );
 
-  const renderSectionHeader = ({ section }: { section: { title: string } }) => (
-    <View className="px-4 py-2 bg-gray-50">
-      <Text className="text-xs font-semibold text-gray-600 uppercase">
-        {section.title}
-      </Text>
-    </View>
-  );
+  const renderFooter = () => {
+    if (!isFetching || isLoading) return null;
 
-  const renderEmpty = () => (
-    <View className="flex-1 items-center justify-center py-20">
-      <Icon
-        type="MaterialCommunityIcons"
-        name="message-text-outline"
-        size={64}
-        color="#D1D5DB"
-      />
-      <Text className="text-gray-500 mt-4 text-base">
-        {searchQuery ? "No conversations found" : "No chat history yet"}
-      </Text>
-      <Text className="text-gray-400 mt-2 text-sm text-center px-8">
-        {searchQuery
-          ? "Try a different search term"
-          : "Start a conversation with Fixit AI Copilot"}
-      </Text>
-    </View>
-  );
+    return (
+      <View className="py-4 items-center">
+        <ActivityIndicator size="small" color="#3B82F6" />
+        <Text className="text-gray-500 mt-2 text-sm">
+          Loading more conversations...
+        </Text>
+      </View>
+    );
+  };
+
+  const renderEmpty = () => {
+    if (isLoading) {
+      return (
+        <View className="flex-1 items-center justify-center py-20">
+          <ActivityIndicator size="large" color="#3B82F6" />
+          <Text className="text-gray-500 mt-4 text-base">
+            Loading conversations...
+          </Text>
+        </View>
+      );
+    }
+
+    if (isError) {
+      return (
+        <View className="flex-1 items-center justify-center py-20">
+          <Icon
+            type="MaterialCommunityIcons"
+            name="alert-circle-outline"
+            size={64}
+            color="#EF4444"
+          />
+          <Text className="text-gray-500 mt-4 text-base">
+            Failed to load conversations
+          </Text>
+          <TouchableOpacity
+            onPress={handleRefresh}
+            activeOpacity={0.7}
+            className="mt-4 bg-blue-600 px-6 py-2 rounded-lg"
+          >
+            <Text className="text-white font-medium">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    return (
+      <View className="flex-1 items-center justify-center py-20">
+        <Icon
+          type="MaterialCommunityIcons"
+          name="message-text-outline"
+          size={64}
+          color="#D1D5DB"
+        />
+        <Text className="text-gray-500 mt-4 text-base">
+          {searchQuery ? "No conversations found" : "No chat history yet"}
+        </Text>
+        <Text className="text-gray-400 mt-2 text-sm text-center px-8">
+          {searchQuery
+            ? "Try a different search term"
+            : "Start a conversation with Nova"}
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
@@ -217,11 +312,13 @@ const ChatHistory = () => {
           <TouchableOpacity
             onPress={handleClearHistory}
             activeOpacity={0.7}
-            disabled={chatHistory.length === 0}
+            disabled={chatHistory.length === 0 || isLoading}
           >
             <Text
               className={`${isTablet ? "text-base" : "text-sm"} ${
-                chatHistory.length === 0 ? "text-gray-300" : "text-blue-600"
+                chatHistory.length === 0 || isLoading
+                  ? "text-gray-300"
+                  : "text-blue-600"
               } font-medium`}
             >
               Clear History
@@ -231,7 +328,7 @@ const ChatHistory = () => {
 
         {/* Search Bar */}
         <View className={`${isTablet ? "px-8" : "px-4"} pb-4`}>
-          <View className="bg-gray-100 rounded-xl px-4 py-3 flex-row items-center">
+          <View className="border border-[#E6E6E6] rounded-3xl px-4 py-4 flex-row items-center">
             <Icon type="Ionicons" name="search" size={20} color="#9CA3AF" />
             <TextInput
               className={`flex-1 ml-2 ${isTablet ? "text-base" : "text-sm"} text-gray-900`}
@@ -239,6 +336,7 @@ const ChatHistory = () => {
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
               onChangeText={setSearchQuery}
+              editable={!isLoading}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
@@ -284,6 +382,11 @@ const ChatHistory = () => {
         }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmpty}
+        ListFooterComponent={renderFooter}
+        onEndReached={loadMoreConversations}
+        onEndReachedThreshold={0.5}
+        refreshing={isLoading && !cursorCreatedAt}
+        onRefresh={handleRefresh}
       />
 
       {/* Delete Confirmation Modal */}

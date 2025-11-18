@@ -8,6 +8,7 @@ import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next"; // <-- Import useTranslation
 import { Text, View } from "react-native";
 
 // Form validation schema
@@ -17,6 +18,7 @@ interface ForgotPasswordFormType {
 
 const ForgotPassword = () => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const { showSuccess, showError } = useToast();
 
@@ -40,14 +42,20 @@ const ForgotPassword = () => {
     try {
       const res = await forgotPassword(data).unwrap();
       if (res) {
-        showSuccess("Success", res.message || "Account created successfully");
+        showSuccess(
+          t("common.success"),
+          res.message || t("auth.accountCreatedSuccess")
+        );
         await setValue(data.email);
 
         await setValueType("password");
         router.push("/(auth)/verify-email");
       }
     } catch (error: any) {
-      showError("Error", error?.data?.message || "Something went wrong");
+      showError(
+        t("common.error"),
+        error?.data?.message || t("common.somethingWentWrong")
+      );
     }
   };
 
@@ -61,28 +69,27 @@ const ForgotPassword = () => {
               isTablet ? "text-3xl" : "text-2xl"
             } font-semibold text-textPrimary`}
           >
-            Forgot Password
+            {t("forgotPasswordScreen.title")}
           </Text>
           <Text
             className={`${isTablet ? "text-xl" : "text-lg"} pt-2 text-[#666666] mb-5`}
           >
-            Enter your email to reset your password. We will send you an OTP to
-            create a new password.
+            {t("forgotPasswordScreen.instruction")}{" "}
           </Text>
         </View>
 
         {/* Form Section */}
         <View className="gap-5 mt-6 flex-1">
           <FormInput
-            label="Email Address"
+            label={t("auth.emailLabel")}
             control={control}
             name="email"
-            placeholder="Enter your email address"
+            placeholder={t("forgotPasswordScreen.emailPlaceholder")}
             rules={{
-              required: "Email address is required",
+              required: t("auth.emailRequired"), // <-- Translated Requirement
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Please enter a valid email address",
+                message: t("auth.emailInvalid"), // <-- You may need to add this key for invalid email
               },
             }}
             autoCapitalize="none"
@@ -93,7 +100,7 @@ const ForgotPassword = () => {
               onPress={handleSubmit(onSubmit)}
               containerClassName="w-[95%]"
               disabled={!isValid}
-              title="Send OTP"
+              title={t("forgotPasswordScreen.sendOTP")}
               loading={isLoading}
             />
           </View>

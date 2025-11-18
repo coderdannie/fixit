@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Nnọọ",
+    "save": "Chekwaa",
+    "cancel": "Kagbuo",
+    "confirm": "Kwenye",
+    "or": "ma ọ bụ",
+    "pleaseWait": "Biko chere...",
+    "continue": "Gaa n'ihu",
+    "success": "Ọganihu",
+    "error": "Njehie",
+    "somethingWentWrong": "Ihe adịghị mma"
+  },
+  "auth": {
+    "loginTitle": "Banye na Akaụntụ Fixit Gị",
+    "signUpTitle": "Mepụta Akaụntụ Fixit",
+    "emailLabel": "Adreesị Email",
+    "emailPlaceholder": "Tinye email gị",
+    "emailRequired": "Biko tinye adreesị email gị",
+    "emailInvalid": "Biko tinye adreesị email ziri ezi",
+    "passwordLabel": "Tinye Okwuntughe Gị",
+    "passwordPlaceholder": "min. 8 ihe odide",
+    "passwordRequired": "Okwuntughe ga-abụrịrị ihe odide 8 ma ọ bụ karịa",
+    "choosePassword": "Họrọ Okwuntughe",
+    "forgotPassword": "Ị chefuru Okwuntughe?",
+    "loginButton": "Banye",
+    "continueWithGoogle": "Gaa n'ihu na Google",
+    "signUpWithGoogle": "Debanye aha site na Google",
+    "noAccount": "Ị nweghị akaụntụ?",
+    "signUp": "Debanye Aha",
+    "haveAccount": "Ị nwere akaụntụ ugbua?",
+    "logIn": "Banye",
+    "firstName": "Aha Mbụ",
+    "firstNamePlaceholder": "Tinye aha mbụ gị",
+    "firstNameRequired": "Biko tinye aha mbụ gị",
+    "lastName": "Aha Ikpeazụ",
+    "lastNamePlaceholder": "Tinye aha ikpeazụ gị",
+    "lastNameRequired": "Biko tinye aha ikpeazụ gị",
+    "agreeToTerms": "Ekwenyere m na",
+    "terms": "Usoro",
+    "and": "na",
+    "privacyPolicy": "Iwu Nzuzo",
+    "accountCreatedSuccess": "E mepụtala akaụntụ nke ọma"
+  },
+  "languageScreen": {
+    "title": "Họrọ Asụsụ",
+    "english": "Bekee",
+    "pidgin": "Pidgin",
+    "yoruba": "Yoruba",
+    "hausa": "Hausa",
+    "igbo": "Igbo"
+  },
+  "roleSelection": {
+    "title": "Kedu ka ị ga-esi jiri Fixit?",
+    "description": "Họrọ etu ị ga-esi jiri FIXIT. Ị nwere ike ịgbanwe nhọrọ gị mgbe ọ bụla na ntọala profaịlụ gị.",
+    "proceed": "Gaa n'ihu",
+    "accountCreated": "E mepụtala akaụntụ nke ọma",
+    "error": "Njehie",
+    "roles": {
+      "vehicle_owner": {
+        "title": "Onye Nwe Ụgbọala",
+        "description": "Maka nlekọta na nchekwa ụgbọala nke onwe."
+      },
+      "fleet_manager": {
+        "title": "Onye Nlekọta Ụgbọala",
+        "description": "Iji jikwaa ma soro ọtụtụ ụgbọala."
+      },
+      "mechanic": {
+        "title": "Onye Nrụzi",
+        "description": "Iji nata ma dozie arịrịọ nrụzi."
+      }
+    }
+  },
+  "forgotPasswordScreen": {
+    "title": "Ị Chefuru Okwuntughe",
+    "instruction": "Tinye email gị iji tọgharịa okwuntughe gị. Anyị ga-ezitere gị OTP iji mepụta okwuntughe ọhụrụ.",
+    "sendOTP": "Ziga OTP",
+    "emailPlaceholder": "Tinye adreesị email gị"
+  },
+  "stayConnectedScreen": {
+    "title": "Nọrọ njikọ ma dị njikere",
+    "description": "Mee ka ngosi rụọ ọrụ iji nweta ngwa ọrụ na mmelite ọnọdụ, ma kwe ka ịnweta ebe iji mee ọrụ n'ebe ahụ yana ịhụ ebe nrụzi.",
+    "enableNotifications": "Mee ka ngosi rụọ ọrụ",
+    "allowLocationAccess": "Kwe ka ịnweta ebe",
+    "createAccountButton": "Mepụta Akaụntụ",
+    "failedToSaveSettings": "Ichekwaba ntọala dara"
+  },
+  "createNewPasswordScreen": {
+    "title": "Mepụta okwuntughe ọhụrụ",
+    "instruction": "Tinye okwuntughe siri ike iji chekwaa akaụntụ gị. Họrọ okwuntughe ị ga-echeta.",
+    "newPasswordLabel": "Mepụta Okwuntughe Ọhụrụ",
+    "confirmPasswordLabel": "Kwenye Okwuntughe Ọhụrụ",
+    "resetFailed": "Ichekwaba okwuntughe dara. Biko nwaa ọzọ.",
+    "successTitle": "Okwuntughe Tọgharịrị nke Ọma",
+    "successDesc": "Ị nwere ike ịbanye ugbu a na okwuntughe ọhụrụ gị."
+  },
+  "uploadProfilePictureScreen": {
+    "title": "Bulite foto profaịlụ",
+    "instruction": "Tinye foto gị doro anya iji wulite ntụkwasị obi na ndị nwe ụgbọala na ndị njikwa ụgbọala. Foto profaịlụ na-enyere ndị ahịa aka ịmata gị ma mee ka profaịlụ gị pụta ìhè.",
+    "uploadPrompt": "Pịa ka ibulite foto profaịlụ",
+    "maxFileSize": "Nnukwu nha faịlụ: 10MB",
+    "selectImageError": "Biko họrọ foto",
+    "uploadSuccess": "E buliri foto profaịlụ nke ọma"
+  },
+  "verifyCodeScreen": {
+    "verificationTitle": "Nkwenye",
+    "resetPasswordTitle": "Tọgharịa Okwuntughe",
+    "verificationInstruction": "Maka nchekwa gị, biko tinye koodu nọmba 4 anyị zigara na {{email}}",
+    "resetInstruction": "Biko tinye koodu nọmba 4 anyị zigara na {{email}} iji tọgharịa okwuntughe gị",
+    "incompleteCodeError": "Biko tinye koodu nọmba 4 zuru ezu",
+    "invalidCodeError": "Koodu nkwenye ezighi ezi. Biko nwaa ọzọ.",
+    "verificationSuccess": "Nkwenye gara nke ọma",
+    "resendTimerLabel": "Ị nwere ike izighachi koodu na ",
+    "resendButton": "Zighachi Koodu",
+    "codeResentTitle": "E Zighachiri Koodu",
+    "codeResentSuccess": "E zigara koodu nkwenye ọhụrụ na email gị",
+    "resendFailed": "Izighachi koodu dara. Biko nwaa ọzọ.",
+    "verifyButton": "Kwenye",
+    "modalSuccessTitle": "Nkwenye Email Gara nke Ọma",
+    "modalSuccessDesc": "E nwetala nkwenye email gị nke ọma. Ị nwere ike ịbanye ugbu a wee malite iji akaụntụ gị"
+  }
+}

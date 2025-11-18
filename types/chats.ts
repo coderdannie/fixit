@@ -19,6 +19,12 @@ export interface StartChatResponse {
   };
 }
 
+export interface AiStartChatResponse {
+  data: {
+    conversationId: string;
+  };
+}
+
 export interface SendMessageRequest {
   conversationId: string;
   clientMsgId: string;
@@ -31,6 +37,8 @@ export interface SendMessageRequest {
     size?: number;
   };
 }
+
+export interface AiSendMesdsageRequest {}
 
 export interface SendMessageResponse {
   messageId: string;
@@ -49,10 +57,11 @@ export interface SendMessageResponse {
 }
 
 export interface GetChatHistoryRequest {
-  conversationId: string;
+  conversationId?: string;
   limit?: number;
   cursorCreatedAt?: string;
   cursorId?: string;
+  type?: string;
 }
 
 export interface ChatMessage {
@@ -78,5 +87,96 @@ export interface GetChatHistoryResponse {
   nextCursor?: {
     createdAt: string;
     id: string;
+  };
+}
+
+export interface AiCopilotSendRequest {
+  conversationId: string;
+  userText?: string;
+  inputType?: "text" | "image";
+  image?:
+    | { url: string }
+    | { base64: string; mime_type: string }
+    | Array<{ base64: string; mime_type: string }>;
+  clientMsgId: string;
+  tier: "premium" | "free";
+  metadata?: Record<string, any>;
+}
+
+export interface CopilotMessage {
+  id: string;
+  type: "user" | "ai" | "system";
+  text: string;
+  time: string;
+  timestamp: Date;
+  images?: string[];
+  status: "pending" | "sent" | "failed";
+  clientMsgId?: string;
+}
+
+export interface Participant {
+  userId: string;
+  lastReadAt: string | null;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  };
+}
+
+export interface LastMessage {
+  id: string;
+  text: string;
+  senderId: string;
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt: string;
+  lastMessage: LastMessage | null;
+  participants: Participant[];
+  unreadCount: number;
+}
+
+// For getAllConversations endpoint
+export interface GetAllConversationsResponse {
+  success: boolean;
+  status_code: number;
+  message: string;
+  data: {
+    items: Conversation[];
+    nextOlderCursor?: {
+      createdAt: string;
+      id: string;
+    };
+    hasMoreOlder: boolean;
+  };
+}
+
+export interface GetChatHistoryResponse {
+  success: boolean;
+  status_code: number;
+  message: string;
+  data: {
+    items: {
+      id: string;
+      conversationId: string;
+      senderId: string;
+      text: string;
+      createdAt: string;
+      clientMsgId: string;
+      mediaUrl: string;
+      // ... other message fields
+    }[];
+    nextOlderCursor?: {
+      createdAt: string;
+      id: string;
+    };
+    hasMoreOlder: boolean;
   };
 }

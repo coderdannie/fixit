@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "or": "or",
+    "pleaseWait": "Please wait...",
+    "continue": "Continue",
+    "success": "Success",
+    "error": "Error",
+    "somethingWentWrong": "Something went wrong"
+  },
+  "auth": {
+    "loginTitle": "Log In to Your Fixit Account",
+    "signUpTitle": "Create a Fixit Account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email name",
+    "emailRequired": "Please enter your email address",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordLabel": "Enter Your Password",
+    "passwordPlaceholder": "min. 8 characters",
+    "passwordRequired": "Password must min.8 characters",
+    "choosePassword": "Choose a Password",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Log In",
+    "continueWithGoogle": "Continue With Google",
+    "signUpWithGoogle": "Sign up with Google",
+    "noAccount": "Do not have an account?",
+    "signUp": "Sign Up",
+    "haveAccount": "Already have an account?",
+    "logIn": "Log In",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter your first name",
+    "firstNameRequired": "Please enter your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter your last name",
+    "lastNameRequired": "Please enter your last name",
+    "agreeToTerms": "I agree to FIXIT's",
+    "terms": "Terms",
+    "and": "&",
+    "privacyPolicy": "Privacy Policy",
+    "accountCreatedSuccess": "Account created successfully"
+  },
+  "languageScreen": {
+    "title": "Select Language",
+    "english": "English",
+    "pidgin": "Pidgin",
+    "yoruba": "Yoruba",
+    "hausa": "Hausa",
+    "igbo": "Igbo"
+  },
+  "roleSelection": {
+    "title": "How will you be using Fixit?",
+    "description": "Choose how you will use FIXIT. You can change your selection anytime in your profile settings.",
+    "proceed": "Proceed",
+    "accountCreated": "Account created successfully",
+    "error": "Something went wrong",
+    "roles": {
+      "vehicle_owner": {
+        "title": "Vehicle Owner",
+        "description": "For personal car monitoring and maintenance."
+      },
+      "fleet_manager": {
+        "title": "Fleet Manager",
+        "description": "To manage and track multiple vehicles."
+      },
+      "mechanic": {
+        "title": "Mechanic",
+        "description": "To receive and handle repair requests."
+      }
+    }
+  },
+  "forgotPasswordScreen": {
+    "title": "Forgot Password",
+    "instruction": "Enter your email to reset your password. We will send you an OTP to create a new password.",
+    "sendOTP": "Send OTP",
+    "emailPlaceholder": "Enter your email address"
+  },
+  "stayConnectedScreen": {
+    "title": "Stay connected and ready",
+    "description": "Enable notifications to get job alerts and status updates, and allow location access for on-site assignments and workshop visibility.",
+    "enableNotifications": "Enable notifications",
+    "allowLocationAccess": "Allow location access",
+    "createAccountButton": "Create Account",
+    "failedToSaveSettings": "Failed to save settings"
+  },
+  "createNewPasswordScreen": {
+    "title": "Create a new password",
+    "instruction": "Enter a strong password to secure your account. Pick a secure password you will remember.",
+    "newPasswordLabel": "Create New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "resetFailed": "Failed to reset password. Please try again.",
+    "successTitle": "Password Reset Successful",
+    "successDesc": "You can now log in with your new password."
+  },
+  "uploadProfilePictureScreen": {
+    "title": "Upload profile picture",
+    "instruction": "Add a clear photo of yourself to build trust with vehicle owners and fleet managers. A profile picture helps clients recognize you and makes your profile stand out.",
+    "uploadPrompt": "Tap to upload profile picture",
+    "maxFileSize": "Max. File Size: 10MB",
+    "selectImageError": "Please select an image",
+    "uploadSuccess": "Profile image uploaded successfully"
+  },
+  "verifyCodeScreen": {
+    "verificationTitle": "Verification",
+    "resetPasswordTitle": "Reset Password",
+    "verificationInstruction": "For your security, please enter the 4-digit code we sent to {{email}}",
+    "resetInstruction": "Please enter the 4-digit code we sent to {{email}} to reset your password",
+    "incompleteCodeError": "Please enter a complete 4-digit code",
+    "invalidCodeError": "Invalid verification code. Please try again.",
+    "verificationSuccess": "Verification successful",
+    "resendTimerLabel": "You can resend code in ",
+    "resendButton": "Resend Code",
+    "codeResentTitle": "Code Resent",
+    "codeResentSuccess": "A new verification code has been sent to your email",
+    "resendFailed": "Failed to resend code. Please try again.",
+    "verifyButton": "Verify",
+    "modalSuccessTitle": "Email Verification Successful",
+    "modalSuccessDesc": "Your email has been successfully verified. You can now log in and start using your account"
+  }
+}

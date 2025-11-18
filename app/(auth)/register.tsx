@@ -20,6 +20,7 @@ import {
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Image,
@@ -30,6 +31,7 @@ import {
 } from "react-native";
 
 const Register = () => {
+  const { t } = useTranslation();
   const { updateAuthUser } = useAuthUser();
   const { showSuccess, showError } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,7 +77,7 @@ const Register = () => {
         });
         showSuccess(
           "Success",
-          response.message || "Account created successfully"
+          response.message || t("auth.accountCreatedSuccess")
         );
         router.push("/(auth)/verify-email");
         await setValue(values.email);
@@ -179,39 +181,39 @@ const Register = () => {
             isTablet ? "text-3xl" : "text-2xl"
           } font-semibold text-textPrimary text-center`}
         >
-          Create a Fixit Account
+          {t("auth.signUpTitle")}
         </Text>
 
         <View className="gap-5 mt-6">
           <FormInput
-            label="First Name"
+            label={t("auth.firstName")}
             control={control}
             name="firstName"
-            placeholder="Enter your first name"
-            rules={{ required: "Please enter your first name" }}
+            placeholder={t("auth.firstNamePlaceholder")}
+            rules={{ required: t("auth.firstNameRequired") }}
           />
           <FormInput
-            label="Last Name"
+            label={t("auth.lastName")}
             control={control}
             name="lastName"
-            placeholder="Enter your last name"
-            rules={{ required: "Please enter your last name" }}
+            placeholder={t("auth.lastNamePlaceholder")}
+            rules={{ required: t("auth.lastNameRequired") }}
           />
           <FormInput
-            label="Email Address"
+            label={t("auth.emailLabel")}
             control={control}
             name="email"
-            placeholder="Enter your email name"
-            rules={{ required: "Please enter your email address" }}
+            placeholder={t("auth.emailPlaceholder")}
+            rules={{ required: t("auth.emailRequired") }}
             autoCapitalize="none"
             keyboardType="email-address"
           />
           <FormInput
-            label="Choose a Password"
+            label={t("auth.choosePassword")}
             control={control}
             name="password"
-            placeholder="Enter password"
-            rules={{ required: "Password must min.8 characters" }}
+            placeholder={t("auth.passwordPlaceholder")}
+            rules={{ required: t("auth.passwordRequired") }}
             secureTextEntry={true}
             showPasswordIcon={true}
           />
@@ -240,19 +242,19 @@ const Register = () => {
                   )}
                 </View>
                 <Text className="text-textPrimary">
-                  I agree to FIXIT's{" "}
+                  {t("auth.agreeToTerms")}{" "}
                   <Text
                     className="text-primary font-medium"
                     onPress={handleTermsPress}
                   >
-                    Terms
-                  </Text>
-                  {" & "}
+                    {t("auth.terms")}
+                  </Text>{" "}
+                  {t("auth.and")}{" "}
                   <Text
                     className="text-primary font-medium"
                     onPress={handlePrivacyPress}
                   >
-                    Privacy Policy
+                    {t("auth.privacyPolicy")}
                   </Text>
                 </Text>
               </TouchableOpacity>
@@ -271,7 +273,7 @@ const Register = () => {
             onPress={handleSubmit(onSubmit)}
             containerClassName="w-[95%]"
             disabled={!isValid}
-            title="Continue"
+            title={t("common.continue")}
             loading={isLoading}
           />
         </View>
@@ -279,7 +281,9 @@ const Register = () => {
         {/* Divider */}
         <View className="flex-row items-center justify-center my-5">
           <View className="flex-1 h-px bg-[#E6E6E6]" />
-          <Text className="mx-4 text-[#9099A2] font-normal">or</Text>
+          <Text className="mx-4 text-[#9099A2] font-normal">
+            {t("common.or")}
+          </Text>
           <View className="flex-1 h-px bg-[#E6E6E6]" />
         </View>
 
@@ -309,7 +313,7 @@ const Register = () => {
                     isTablet ? "text-xl" : "text-base"
                   } font-semibold text-textPrimary text-center `}
                 >
-                  Please wait...
+                  {t("common.pleaseWait")}
                 </Text>
               </>
             ) : (
@@ -324,7 +328,7 @@ const Register = () => {
                     isTablet ? "text-xl" : "text-base"
                   } ml-3 text-base text-textPrimary font-semibold`}
                 >
-                  Sign up with Google
+                  {t("auth.signUpWithGoogle")}
                 </Text>
               </>
             )}
@@ -334,10 +338,10 @@ const Register = () => {
         {/* Login Link */}
         <View className="flex-row items-center justify-center mt-8 mb-6">
           <Text className="text-gray-600 font-normal">
-            Already have an account?{" "}
+            {t("auth.haveAccount")}{" "}
           </Text>
           <TouchableOpacity onPress={onLoginPress} activeOpacity={0.7}>
-            <Text className="text-primary font-medium">Log In</Text>
+            <Text className="text-primary font-medium">{t("auth.logIn")}</Text>
           </TouchableOpacity>
         </View>
       </View>

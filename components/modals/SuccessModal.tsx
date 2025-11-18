@@ -61,7 +61,7 @@ const SuccessModal = ({
             onPress={handleProceed}
             activeOpacity={0.8}
           >
-            <Text className="text-white text-lg font-semibold">{btnText}</Text>
+            <Text className="text-white  font-semibold">{btnText}</Text>
           </TouchableOpacity>
         </View>
       </View>

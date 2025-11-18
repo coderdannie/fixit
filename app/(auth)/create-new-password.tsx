@@ -14,9 +14,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next"; // <-- Import useTranslation
 import { Text, View } from "react-native";
 
 const CreateNewPassword = () => {
+  const { t } = useTranslation(); // <-- Initialize useTranslation
   const [isVisible, setIsVisible] = useState(false);
   const { showError } = useToast();
 
@@ -49,12 +51,13 @@ const CreateNewPassword = () => {
         setIsVisible(true);
         await setValue("");
       } else {
-        showError("Error", `Unexpected status: ${response.status}`);
+        // Fallback for unexpected API response
+        showError(t("common.error"), t("common.somethingWentWrong"));
       }
     } catch (error: any) {
       showError(
-        "Error",
-        error?.data?.message || "Failed to reset password. Please try again."
+        t("common.error"),
+        error?.data?.message || t("createNewPasswordScreen.resetFailed") // <-- Translated fallback error
       );
     }
   };
@@ -73,30 +76,30 @@ const CreateNewPassword = () => {
             isTablet ? "text-3xl" : "text-2xl"
           } font-semibold text-textPrimary`}
         >
-          Create a new password
+          {t("createNewPasswordScreen.title")} {/* <-- Translated Title */}
         </Text>
         <Text
           className={`${isTablet ? "text-xl" : "text-lg"} pt-2 text-[#666666] mb-5`}
         >
-          Enter a strong password to secure your account. Pick a secure password
-          you will remember.
+          {t("createNewPasswordScreen.instruction")}{" "}
+          {/* <-- Translated Instruction */}
         </Text>
         <View className="gap-5 mt-6">
           <FormInput
-            label="Create New Password"
+            label={t("createNewPasswordScreen.newPasswordLabel")}
             control={control}
             name="newPassword"
-            placeholder="min. 8 characters"
-            rules={{ required: "Password must min.8 characters" }}
+            placeholder={t("auth.passwordPlaceholder")}
+            rules={{ required: t("auth.passwordRequired") }}
             secureTextEntry={true}
             showPasswordIcon={true}
           />
           <FormInput
-            label="Confirm New Password"
+            label={t("createNewPasswordScreen.confirmPasswordLabel")}
             control={control}
             name="confirmPassword"
-            placeholder="min. 8 characters"
-            rules={{ required: "Password must min.8 characters" }}
+            placeholder={t("auth.passwordPlaceholder")}
+            rules={{ required: t("auth.passwordRequired") }}
             secureTextEntry={true}
             showPasswordIcon={true}
           />
@@ -105,7 +108,7 @@ const CreateNewPassword = () => {
               onPress={handleSubmit(onSubmit)}
               containerClassName="w-[95%]"
               disabled={!isValid}
-              title="Continue"
+              title={t("common.continue")}
               loading={isLoading}
             />
           </View>
@@ -113,9 +116,9 @@ const CreateNewPassword = () => {
       </View>
       <SuccessModal
         isVisible={isVisible}
-        btnText="Log In"
-        title="Password Reset Successful"
-        desc="You can now log in with your new password."
+        btnText={t("auth.logIn")}
+        title={t("createNewPasswordScreen.successTitle")}
+        desc={t("createNewPasswordScreen.successDesc")}
         onClose={() => setIsVisible(false)}
         onProceed={handleProceed}
       />

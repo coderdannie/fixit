@@ -12,6 +12,8 @@ export default function Index() {
   const accessToken = authUser?.accessToken;
   const onboardingCompleted = authUser?.data?.onboarding?.onboardingCompleted;
 
+  console.log("onboarding", onboardingCompleted);
+
   // Only fetch onboarding if logged in AND onboarding not completed
   const shouldFetchOnboarding = accessToken && !onboardingCompleted;
 
@@ -68,5 +70,5 @@ export default function Index() {
   }
 
   // All steps completed, go home
-  return <Redirect href="/upload-profile-picture" />;
+  return <Redirect href="/(tabs)/home" />;
 }

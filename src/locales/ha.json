@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Barka da zuwa",
+    "save": "Ajiye",
+    "cancel": "Soke",
+    "confirm": "Tabbatar",
+    "or": "ko",
+    "pleaseWait": "Don Allah jira...",
+    "continue": "Ci gaba",
+    "success": "Nasarar",
+    "error": "Kuskure",
+    "somethingWentWrong": "Wani abu bai yi ba"
+  },
+  "auth": {
+    "loginTitle": "Shiga Asusun Fixit Ku",
+    "signUpTitle": "Ƙirƙiri Asusun Fixit",
+    "emailLabel": "Adireshin Imel",
+    "emailPlaceholder": "Shigar da imel ɗinku",
+    "emailRequired": "Don Allah shigar da adireshin imel ɗinku",
+    "emailInvalid": "Don Allah shigar da adireshin imel mai inganci",
+    "passwordLabel": "Shigar da Kalmar Sirri",
+    "passwordPlaceholder": "aƙalla haruffa 8",
+    "passwordRequired": "Kalmar sirri dole ta zama aƙalla haruffa 8",
+    "choosePassword": "Zaɓi Kalmar Sirri",
+    "forgotPassword": "Kun manta da Kalmar Sirri?",
+    "loginButton": "Shiga",
+    "continueWithGoogle": "Ci gaba da Google",
+    "signUpWithGoogle": "Yi rajista da Google",
+    "noAccount": "Ba ku da asusu?",
+    "signUp": "Yi Rajista",
+    "haveAccount": "Kun riga kuna da asusu?",
+    "logIn": "Shiga",
+    "firstName": "Suna na Farko",
+    "firstNamePlaceholder": "Shigar da sunan ku na farko",
+    "firstNameRequired": "Don Allah shigar da sunan ku na farko",
+    "lastName": "Suna na Ƙarshe",
+    "lastNamePlaceholder": "Shigar da sunan ku na ƙarshe",
+    "lastNameRequired": "Don Allah shigar da sunan ku na ƙarshe",
+    "agreeToTerms": "Na amince da",
+    "terms": "Sharuɗɗa",
+    "and": "da",
+    "privacyPolicy": "Dokar Sirri",
+    "accountCreatedSuccess": "An ƙirƙiri asusu cikin nasara"
+  },
+  "languageScreen": {
+    "title": "Zaɓi Harshe",
+    "english": "Turanci",
+    "pidgin": "Pidgin",
+    "yoruba": "Yarbanci",
+    "hausa": "Hausa",
+    "igbo": "Igbo"
+  },
+  "roleSelection": {
+    "title": "Ta yaya za ku yi amfani da Fixit?",
+    "description": "Zaɓi yadda za ku yi amfani da FIXIT. Kuna iya canza zaɓin ku koyaushe a cikin saitunan bayanan ku.",
+    "proceed": "Ci gaba",
+    "accountCreated": "An ƙirƙiri asusu cikin nasara",
+    "error": "Kuskure",
+    "roles": {
+      "vehicle_owner": {
+        "title": "Mai Mota",
+        "description": "Don sa ido da kula da motar mutum."
+      },
+      "fleet_manager": {
+        "title": "Mai Sarrafa Motoci",
+        "description": "Don sarrafa da bin motoci da yawa."
+      },
+      "mechanic": {
+        "title": "Makaniki",
+        "description": "Don karɓa da kula da buƙatun gyara."
+      }
+    }
+  },
+  "forgotPasswordScreen": {
+    "title": "Kun Manta da Kalmar Sirri",
+    "instruction": "Shigar da imel ɗinku don sake saita kalmar sirrinku. Za mu aiko muku da OTP don ƙirƙirar sabuwar kalmar sirri.",
+    "sendOTP": "Aika OTP",
+    "emailPlaceholder": "Shigar da adireshin imel ɗinku"
+  },
+  "stayConnectedScreen": {
+    "title": "Kasance a haɗe kuma a shirye",
+    "description": "Bada izinin sanarwa don samun faɗakarwar aiki da sabunta matsayi, da kuma bada izinin samun damar wuri don aiyuka a wurin da kuma ganin wurin gyara.",
+    "enableNotifications": "Bada izinin sanarwa",
+    "allowLocationAccess": "Bada izinin samun damar wuri",
+    "createAccountButton": "Ƙirƙiri Asusun",
+    "failedToSaveSettings": "Kasa ajiye saituna"
+  },
+  "createNewPasswordScreen": {
+    "title": "Ƙirƙiri sabuwar kalmar sirri",
+    "instruction": "Shigar da kalmar sirri mai ƙarfi don amintar da asusunka. Zaɓi kalmar sirri mai aminci da za ku tuna.",
+    "newPasswordLabel": "Ƙirƙiri Sabuwar Kalmar Sirri",
+    "confirmPasswordLabel": "Tabbatar da Sabuwar Kalmar Sirri",
+    "resetFailed": "Kasa sake saita kalmar sirri. Don Allah a sake gwadawa.",
+    "successTitle": "An Yi Nasarar Sake Saida Kalmar Sirri",
+    "successDesc": "Yanzu za ku iya shiga da sabuwar kalmar sirrinku."
+  },
+  "uploadProfilePictureScreen": {
+    "title": "Ɗora hoton martaba",
+    "instruction": "Ƙara hotonku bayyananne don gina amana tare da masu motoci da manajojin motoci. Hoton martaba yana taimakawa abokan ciniki su gane ku kuma yana sa martabarku ta yi fice.",
+    "uploadPrompt": "Danna don ɗora hoton martaba",
+    "maxFileSize": "Max. Girman Fayil: 10MB",
+    "selectImageError": "Don Allah zaɓi hoto",
+    "uploadSuccess": "An ɗora hoton martaba cikin nasara"
+  },
+  "verifyCodeScreen": {
+    "verificationTitle": "Tabbatarwa",
+    "resetPasswordTitle": "Sake Saita Kalmar Sirri",
+    "verificationInstruction": "Don amincinka, don Allah shigar da lambar 4 da muka aiko zuwa {{email}}",
+    "resetInstruction": "Don Allah shigar da lambar 4 da muka aiko zuwa {{email}} don sake saita kalmar sirri",
+    "incompleteCodeError": "Don Allah shigar da cikakkiyar lambar 4",
+    "invalidCodeError": "Lambar tabbatarwa ba daidai ba ce. Don Allah a sake gwadawa.",
+    "verificationSuccess": "An yi nasarar tabbatarwa",
+    "resendTimerLabel": "Kuna iya sake aika lambar a cikin ",
+    "resendButton": "Sake Aika Lambar",
+    "codeResentTitle": "An Sake Aika Lambar",
+    "codeResentSuccess": "An aiko sabuwar lambar tabbatarwa zuwa imel ɗinku",
+    "resendFailed": "Kasa sake aika lambar. Don Allah a sake gwadawa.",
+    "verifyButton": "Tabbatar",
+    "modalSuccessTitle": "An Yi Nasarar Tabbatar da Imel",
+    "modalSuccessDesc": "An tabbatar da imel ɗinku cikin nasara. Yanzu za ku iya shiga kuma ku fara amfani da asusunku"
+  }
+}

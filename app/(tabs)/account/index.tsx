@@ -1,11 +1,13 @@
 import { useLogoutMutation } from "@/apis/authQuery";
 import Icon from "@/components/Icon";
+import LogoutBottomSheet from "@/components/modals/LogoutModal";
 import useToast from "@/hooks/useToast";
 import { clearAuth } from "@/store/slices/authSlice";
 import { isTablet } from "@/utils/utils";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import {
   ActivityIndicator,
   ImageBackground,
@@ -21,7 +23,7 @@ const Account = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { showSuccess, showError } = useToast();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const logoutRef = useRef<BottomSheet>(null);
 
   const [logout, { isLoading: isLogoutLoading }] = useLogoutMutation();
 
@@ -31,14 +33,14 @@ const Account = () => {
       icon: "bell",
       iconType: "Feather",
       label: "Notification settings",
-      route: "/(tabs)/account/notification-settings",
+      route: "/account/notification-settings",
     },
     {
       id: 2,
       icon: "money-bill-1",
       iconType: "FontAwesome6",
       label: "Billing History",
-      route: "/billing-history",
+      route: "/account/billing-history",
     },
     {
       id: 3,
@@ -68,33 +70,36 @@ const Account = () => {
     router.push("/(tabs)/account/delete-account");
   };
 
-  const handleLogOut = async () => {
-    setIsLoggingOut(true);
+  // 1. Initial log out press (Opens the bottom sheet)
+  const handleLogOutPress = () => {
+    logoutRef.current?.expand();
+  };
+
+  // 2. Confirmed log out (Performs the API call)
+  const handleConfirmLogout = async () => {
     try {
-      const response = await logout().unwrap();
+      await logout().unwrap();
       dispatch(clearAuth());
       router.replace("/(auth)/login");
     } catch (error: any) {
       const errorMessage = error?.data?.message?.toLowerCase().trim();
 
       console.log(errorMessage);
+
       // If token expired, clear auth and redirect
       if (
         errorMessage?.includes("invalid token") ||
         errorMessage?.includes("token expired")
       ) {
-        console.log("errorMsg", errorMessage);
         dispatch(clearAuth());
         router.replace("/(auth)/login");
-        return; // Exit early, don't show error
+        return;
       }
 
       showError(
         "Error",
         error?.data?.message || "Failed to log out. Please try again."
       );
-    } finally {
-      setIsLoggingOut(false);
     }
   };
 
@@ -235,12 +240,12 @@ const Account = () => {
           {/* Log Out Button */}
           <TouchableOpacity
             className="flex-row items-center py-4 mb-8"
-            onPress={handleLogOut}
-            disabled={isLoggingOut || isLogoutLoading}
+            onPress={handleLogOutPress}
+            disabled={isLogoutLoading}
           >
             <Icon type="Feather" name="log-out" color="#CC0000" size={20} />
             <Text className="text-[#CC0000] text-base ml-3">Log Out</Text>
-            {(isLoggingOut || isLogoutLoading) && (
+            {isLogoutLoading && (
               <ActivityIndicator
                 size="small"
                 color="#CC0000"
@@ -250,6 +255,13 @@ const Account = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Logout Bottom Sheet */}
+      <LogoutBottomSheet
+        ref={logoutRef}
+        onConfirm={handleConfirmLogout}
+        onClose={() => console.log("Logout bottom sheet closed")}
+      />
     </SafeAreaView>
   );
 };

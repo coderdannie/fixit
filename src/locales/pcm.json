@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Wetin dey?",
+    "save": "Save am",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "or": "or",
+    "pleaseWait": "Abeg wait small...",
+    "continue": "Continue",
+    "success": "E work",
+    "error": "Oversight",
+    "somethingWentWrong": "Something no work"
+  },
+  "auth": {
+    "loginTitle": "Enter inside your Fixit Account",
+    "signUpTitle": "Create one Fixit Account",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Put your email",
+    "emailRequired": "Abeg enter your email address",
+    "emailInvalid": "Abeg put correct email address",
+    "passwordLabel": "Enter Your Password",
+    "passwordPlaceholder": "min. 8 characters",
+    "passwordRequired": "Password must minimum 8 characters",
+    "choosePassword": "Choose one Password",
+    "forgotPassword": "You forget Password?",
+    "loginButton": "Log In",
+    "continueWithGoogle": "Continue With Google",
+    "signUpWithGoogle": "Sign Up with Google",
+    "noAccount": "You no get account?",
+    "signUp": "Sign Up",
+    "haveAccount": "You don get account already?",
+    "logIn": "Log In",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Put your first name",
+    "firstNameRequired": "Abeg enter your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Put your last name",
+    "lastNameRequired": "Abeg enter your last name",
+    "agreeToTerms": "I gree to FIXIT's",
+    "terms": "Terms",
+    "and": "&",
+    "privacyPolicy": "Privacy Policy",
+    "accountCreatedSuccess": "Dem don create account successfully"
+  },
+  "languageScreen": {
+    "title": "Choose Language",
+    "english": "English",
+    "pidgin": "Pidgin",
+    "yoruba": "Yoruba",
+    "hausa": "Hausa",
+    "igbo": "Igbo"
+  },
+  "roleSelection": {
+    "title": "How you go dey use Fixit?",
+    "description": "Choose how you go use FIXIT. You fit change your selection anytime for your profile settings.",
+    "proceed": "Continue",
+    "accountCreated": "Dem don create account successfully",
+    "error": "Something no work",
+    "roles": {
+      "vehicle_owner": {
+        "title": "Vehicle Owner",
+        "description": "For personal car monitoring and maintenance."
+      },
+      "fleet_manager": {
+        "title": "Fleet Manager",
+        "description": "To manage and track many vehicles."
+      },
+      "mechanic": {
+        "title": "Mechanic",
+        "description": "To receive and handle repair requests."
+      }
+    }
+  },
+  "forgotPasswordScreen": {
+    "title": "You Forget Password",
+    "instruction": "Put your email so you fit reset your password. We go send you one OTP to make new password.",
+    "sendOTP": "Send OTP",
+    "emailPlaceholder": "Put your email address"
+  },
+  "stayConnectedScreen": {
+    "title": "Stay connected and ready",
+    "description": "Open notification settings so you fit get job alerts and status updates. Also, allow location access for work and workshop visibility.",
+    "enableNotifications": "Open notifications",
+    "allowLocationAccess": "Allow location access",
+    "createAccountButton": "Create Account",
+    "failedToSaveSettings": "Settings no gree save"
+  },
+  "createNewPasswordScreen": {
+    "title": "Create new password",
+    "instruction": "Enter strong password so your account go secure well. Pick secure password you go fit remember.",
+    "newPasswordLabel": "Create New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "resetFailed": "Password reset no work. Abeg try again.",
+    "successTitle": "Password Reset Don Work",
+    "successDesc": "You fit log in now with your new password."
+  },
+  "uploadProfilePictureScreen": {
+    "title": "Upload profile picture",
+    "instruction": "Put correct photo of yourself so vehicle owners and fleet managers go trust you. Profile picture dey help clients know you and make your profile fine well well.",
+    "uploadPrompt": "Tap to upload profile picture",
+    "maxFileSize": "Max. File Size: 10MB",
+    "selectImageError": "Abeg choose one image",
+    "uploadSuccess": "Profile image upload don work"
+  },
+  "verifyCodeScreen": {
+    "verificationTitle": "Verification",
+    "resetPasswordTitle": "Reset Password",
+    "verificationInstruction": "For your security, abeg put the 4-digit code we send give {{email}}",
+    "resetInstruction": "Abeg put the 4-digit code we send give {{email}} so you fit reset your password",
+    "incompleteCodeError": "Abeg put the full 4-digit code",
+    "invalidCodeError": "Verification code no correct. Abeg try again.",
+    "verificationSuccess": "Verification don work",
+    "resendTimerLabel": "You fit resend code for ",
+    "resendButton": "Resend Code",
+    "codeResentTitle": "Code Don Resend",
+    "codeResentSuccess": "New verification code don enter your email",
+    "resendFailed": "Code no gree resend. Abeg try again.",
+    "verifyButton": "Verify",
+    "modalSuccessTitle": "Email Verification Don Work",
+    "modalSuccessDesc": "Dem don verify your email successfully. You fit log in now and start to use your account"
+  }
+}

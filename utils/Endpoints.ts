@@ -22,15 +22,23 @@ export const Endpoints = {
   ADD_SERVICES: "/onboarding/mechanic-services",
   USER_SETTINGS: "/onboarding/user-settings",
   GET_CURRENT_LOGGED_IN_USER: "/users/me",
+  GET_SPECIALIZATION: "/admin/specialization",
+  GET_SERVICES: "/admin/services",
 
   //jobs
   ADD_NOTE: "/mechanics/notes",
   GET_ALL_NOTES: "/mechanics/notes",
 
   //Customer support chat
-  SUPPORT_CHAT_START: "/support-chat/start",
+  SUPPORT_CHAT_START: "/co-pilot/chat/start",
   SUPPORT_CHAT_SEND: "/support-chat/send",
   SUPPORT_CHAT_HISTORY: "/support-chat/history",
+
+  //ai chat
+  AI_CHAT_START: "/co-pilot/chat/start",
+  AI_CHAT_HISTORY: "/co-pilot/chat/history",
+  AI_CHAT_SEND: "/co-pilot/chat",
+  GET_ALL_AI_CONVERSATIONS: "/co-pilot/chat/conversations",
 };
 
 export const RtkqTagEnum = {
@@ -53,7 +61,8 @@ export const RtkqTagEnum = {
   CREATE_UPLOAD_SIGNATURE: "CREATE_UPLOAD_SIGNATURE",
   CREATE_GENERAL_UPLOAD_SIGNATURE: " CREATE_GENERAL_UPLOAD_SIGNATURE",
   GET_CURRENT_LOGGED_IN_USER: "GET_CURRENT_LOGGED_IN_USER",
-
+  GET_SPECIALIZATION: "GET_SPECIALIZATION",
+  GET_SERVICES: "GET_SERVICES",
   //job
   ADD_NOTE: "ADD_NOTE",
   GET_ALL_NOTES: "GET_ALL_NOTES",
@@ -62,4 +71,8 @@ export const RtkqTagEnum = {
   //customer chat support
   CHAT_SESSION: "CHAT_SESSION",
   CHAT_MESSAGES: "CHAT_MESSAGES",
+
+  //AI chat
+  AI_CHAT_SESSION: "AI_CHAT_SESSION",
+  AI_CHAT_MESSAGES: "AI_CHAT_SESSION",
 } as const;

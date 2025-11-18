@@ -170,3 +170,31 @@ export const formatDates = (date: Date): string => {
     });
   }
 };
+
+export const fileToImagePayload = (
+  uri: string,
+  type: string
+): Promise<{ base64: string; mime_type: string }> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const reader = new FileReader();
+
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.onload = () => {
+        try {
+          const result = String(reader.result || "");
+          const m = result.match(/^data:(.+?);base64,(.+)$/);
+          const meta = m?.[1] || type;
+          const data = m?.[2] || result;
+          resolve({ base64: data, mime_type: meta });
+        } catch (e) {
+          reject(e);
+        }
+      };
+      reader.readAsDataURL(blob);
+    } catch (e) {
+      reject(e);
+    }
+  });

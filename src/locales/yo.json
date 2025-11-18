@@ -1,0 +1,122 @@
+{
+  "common": {
+    "welcome": "Ẹ káàbọ̀",
+    "save": "Fi pamọ́",
+    "cancel": "Fagilé",
+    "confirm": "Jẹ́rìísí",
+    "or": "tàbí",
+    "pleaseWait": "Jọ̀wọ́ dúró...",
+    "continue": "Tẹ̀síwájú",
+    "success": "Àṣeyọrí",
+    "error": "Àṣìṣe",
+    "somethingWentWrong": "Nkan kan kò dára"
+  },
+  "auth": {
+    "loginTitle": "Wọlé sí Àkọọ́lẹ̀ Fixit Rẹ",
+    "signUpTitle": "Ṣẹ̀dá Àkọọ́lẹ̀ Fixit Kan",
+    "emailLabel": "Àdírẹ́ẹ̀sì Ímeèlì",
+    "emailPlaceholder": "Tẹ orúkọ ímeèlì rẹ",
+    "emailRequired": "Jọ̀wọ́ tẹ àdírẹ́ẹ̀sì ímeèlì rẹ",
+    "emailInvalid": "Jọ̀wọ́ tẹ àdírẹ́ẹ̀sì ímeèlì tó tọ́",
+    "passwordLabel": "Tẹ Ọ̀rọ̀ Ìpamọ́ Rẹ",
+    "passwordPlaceholder": "min. 8 àwọn ohun-kikọ",
+    "passwordRequired": "Ọ̀rọ̀ ìpamọ́ gbọ́dọ̀ jẹ́ ó kéré tán.8 àwọn ohun-kikọ",
+    "choosePassword": "Yan Ọ̀rọ̀ Ìpamọ́ Kan",
+    "forgotPassword": "Ṣé o gbàgbé ọ̀rọ̀ ìpamọ́?",
+    "loginButton": "Wọlé",
+    "continueWithGoogle": "Tẹ̀síwájú Pẹ̀lú Google",
+    "signUpWithGoogle": "Forúkọsílẹ̀ pẹ̀lú Google",
+    "noAccount": "Kò ní àkọọ́lẹ̀?",
+    "signUp": "Forúkọsílẹ̀",
+    "haveAccount": "Ṣé o ti ní àkọọ́lẹ̀ tẹ́lẹ̀?",
+    "logIn": "Wọlé",
+    "firstName": "Orúkọ Àkọ́kọ́",
+    "firstNamePlaceholder": "Tẹ orúkọ àkọ́kọ́ rẹ",
+    "firstNameRequired": "Jọ̀wọ́ tẹ orúkọ àkọ́kọ́ rẹ",
+    "lastName": "Orúkọ Ìkẹhìn",
+    "lastNamePlaceholder": "Tẹ orúkọ ìkẹhìn rẹ",
+    "lastNameRequired": "Jọ̀wọ́ tẹ orúkọ àkọ́kọ́ rẹ",
+    "agreeToTerms": "Mo gbà sí àwọn",
+    "terms": "Àwọn Ìlànà",
+    "and": "àti",
+    "privacyPolicy": "Ètò Àbò Aláadani",
+    "accountCreatedSuccess": "A ti ṣẹ̀dá àkọọ́lẹ̀ ní àṣeyọrí"
+  },
+  "languageScreen": {
+    "title": "Yan Èdè",
+    "english": "Gẹ̀ẹ́sì",
+    "pidgin": "Pidgin",
+    "yoruba": "Yorùbá",
+    "hausa": "Hausa",
+    "igbo": "Igbo"
+  },
+  "roleSelection": {
+    "title": "Báwo ni ìwọ yóò ṣe lo Fixit?",
+    "description": "Yan bí ìwọ yóò ṣe lo FIXIT. O lè yí yíyàn rẹ padà nígbàkúgbà nínú ààtò profaili rẹ.",
+    "proceed": "Tẹ̀síwájú",
+    "accountCreated": "A ti ṣẹ̀dá àkọọ́lẹ̀ ní àṣeyọrí",
+    "error": "Nkan kan kò dára",
+    "roles": {
+      "vehicle_owner": {
+        "title": "Oníṣọ̀wọ́ Ọkọ̀",
+        "description": "Fún àbójútó ọkọ̀ ti ara ẹni àti ìtọ́jú."
+      },
+      "fleet_manager": {
+        "title": "Alábòójútó Ọkọ̀ Púpọ̀",
+        "description": "Láti ṣàkóso àti tọpa ọpọlọpọ àwọn ọkọ̀."
+      },
+      "mechanic": {
+        "title": "Mẹkaniki",
+        "description": "Láti gbà àti ṣàkóso àwọn ìbéèrè àtúnṣe."
+      }
+    }
+  },
+  "forgotPasswordScreen": {
+    "title": "Gbàgbé Ọ̀rọ̀ Ìpamọ́",
+    "instruction": "Tẹ ímeèlì rẹ láti tún ọ̀rọ̀ ìpamọ́ rẹ ṣe. A ó fi OTP ránṣẹ́ sí ọ láti ṣẹ̀dá ọ̀rọ̀ ìpamọ́ tuntun.",
+    "sendOTP": "Ránṣẹ́ OTP",
+    "emailPlaceholder": "Tẹ àdírẹ́ẹ̀sì ímeèlì rẹ"
+  },
+  "stayConnectedScreen": {
+    "title": "Dúró ní ìsopọ̀ àti ní ìmúrasílẹ̀",
+    "description": "Yọ́nda ìfìkìlọ̀ láti gba àwọn ìkìlọ̀ iṣẹ́ àti àwọn ìdánítójú ipò, àti yọ́nda ìwọlé sí ipò fún àwọn iṣẹ́ ojú pópó àti bíbọ́ sí ojúlé iṣẹ́.",
+    "enableNotifications": "Yọ́nda ìfìkìlọ̀",
+    "allowLocationAccess": "Yọ́nda ìwọlé sí ipò",
+    "createAccountButton": "Ṣẹ̀dá Àkọọ́lẹ̀",
+    "failedToSaveSettings": "Kùnà láti fi àwọn ààtò pamọ́"
+  },
+  "createNewPasswordScreen": {
+    "title": "Ṣẹ̀dá ọ̀rọ̀ ìpamọ́ tuntun",
+    "instruction": "Tẹ ọ̀rọ̀ ìpamọ́ lílágbára láti mú àkọọ́lẹ̀ rẹ lábò. Yan ọ̀rọ̀ ìpamọ́ tí o rò pé o lè rántí.",
+    "newPasswordLabel": "Ṣẹ̀dá Ọ̀rọ̀ Ìpamọ́ Tuntun",
+    "confirmPasswordLabel": "Jẹ́rìísí Ọ̀rọ̀ Ìpamọ́ Tuntun",
+    "resetFailed": "Kùnà láti tún ọ̀rọ̀ ìpamọ́ ṣe. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kansi.",
+    "successTitle": "Àtúntò Ọ̀rọ̀ Ìpamọ́ Yọrí",
+    "successDesc": "O lè wọlé pẹ̀lú ọ̀rọ̀ ìpamọ́ tuntun rẹ nísisìyí."
+  },
+  "uploadProfilePictureScreen": {
+    "title": "Gbé àwòrán profaili sí òkè",
+    "instruction": "Fi àwòrán tó mọ́ hàn láti kọ́ ìgbẹ́kẹ̀lé pẹ̀lú àwọn oníṣọ̀wọ́ ọkọ̀ àti àwọn alábòójútó ọkọ̀. Àwòrán profaili máa ń ran àwọn oníbàárà lọ́wọ́ láti mọ̀ ọ́ àti láti mú profaili rẹ wá sí àkíyèsí.",
+    "uploadPrompt": "Fọwọ́ tẹ̀ láti gbé àwòrán profaili sí òkè",
+    "maxFileSize": "Ìwọ̀n Fáìlì Tó Pọ̀ Jù: 10MB",
+    "selectImageError": "Jọ̀wọ́ yan àwòrán kan",
+    "uploadSuccess": "A ti gbé àwòrán profaili sí òkè ní àṣeyọrí"
+  },
+  "verifyCodeScreen": {
+    "verificationTitle": "Ìfìdíhẹ",
+    "resetPasswordTitle": "Àtúntò Ọ̀rọ̀ Ìpamọ́",
+    "verificationInstruction": "Fún àbò rẹ, jọ̀wọ́ tẹ koodu nọmba mẹ́rin tí a fi ránṣẹ́ sí {{email}}",
+    "resetInstruction": "Jọ̀wọ́ tẹ koodu nọmba mẹ́rin tí a fi ránṣẹ́ sí {{email}} láti tún ọ̀rọ̀ ìpamọ́ rẹ ṣe",
+    "incompleteCodeError": "Jọ̀wọ́ tẹ koodu nọmba mẹ́rin lẹ́kùn-ún",
+    "invalidCodeError": "Koodu ìfìdíhẹ tí kò tọ́. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kansi.",
+    "verificationSuccess": "Ìfìdíhẹ yọrí",
+    "resendTimerLabel": "O lè tún koodu ránṣẹ́ ní ",
+    "resendButton": "Tún Koodu Ránṣẹ́",
+    "codeResentTitle": "A Ti Tún Koodu Ránṣẹ́",
+    "codeResentSuccess": "A ti fi koodu ìfìdíhẹ tuntun ránṣẹ́ sí ímeèlì rẹ",
+    "resendFailed": "Kùnà láti tún koodu ránṣẹ́. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kansi.",
+    "verifyButton": "Fìdíhẹ",
+    "modalSuccessTitle": "Ìfìdíhẹ Ímeèlì Yọrí",
+    "modalSuccessDesc": "A ti fìdí ímeèlì rẹ múlẹ̀ ní àṣeyọrí. O lè wọlé báyìí kí o sì bẹ̀rẹ̀ sí lo àkọọ́lẹ̀ rẹ"
+  }
+}

@@ -19,6 +19,7 @@ import {
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Image,
@@ -29,6 +30,7 @@ import {
 } from "react-native";
 
 const Login = () => {
+  const { t } = useTranslation();
   const { updateAuthUser } = useAuthUser();
 
   const [googleSignInSignUp, { isLoading: isGoogleloading }] =
@@ -42,7 +44,7 @@ const Login = () => {
   } = useForm({
     defaultValues: {
       email: "dannie2@yopmail.com",
-      password: "Dannie123#%",
+      password: "Dannie12345%",
     },
     resolver: zodResolver(loginSchema),
     mode: "onChange",
@@ -51,7 +53,7 @@ const Login = () => {
   const router = useRouter();
   const [login, { isLoading }] = useLoginMutation();
 
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   const onSubmit = async (data: LoginFormType) => {
     try {
@@ -80,6 +82,7 @@ const Login = () => {
       }
     } catch (error: any) {
       showError("Error", error?.data?.message || "An error occurred");
+      console.log("error", error);
     }
   };
 
@@ -115,7 +118,7 @@ const Login = () => {
             router.push("/mechanic-profile-setup");
           } else if (!steps?.mechanicProfilePicture?.completed) {
             router.push("/upload-profile-picture");
-          } else if (steps?.mechanicServices?.completed) {
+          } else if (!steps?.mechanicServices?.completed) {
             router.push("/service");
           } else if (!steps?.userSettings?.completed) {
             router.push("/stay_connected");
@@ -158,6 +161,7 @@ const Login = () => {
   const onForgotPassPress = () => {
     router.push("/(auth)/forgot_password");
   };
+
   return (
     <AuthLayout>
       <View className={`flex-1 ${isTablet ? "px-10" : "px-5"}`}>
@@ -166,45 +170,49 @@ const Login = () => {
             isTablet ? "text-3xl" : "text-2xl"
           } font-semibold text-textPrimary text-center`}
         >
-          Log In to Your Fixit Account
+          {t("auth.loginTitle")}
         </Text>
 
         <View className="gap-5 mt-6">
           <FormInput
-            label="Email Address"
+            label={t("auth.emailLabel")}
             control={control}
             name="email"
-            placeholder="Enter your email name"
-            rules={{ required: "Please enter your email address" }}
+            placeholder={t("auth.emailPlaceholder")}
+            rules={{ required: t("auth.emailRequired") }}
             autoCapitalize="none"
             keyboardType="email-address"
           />
           <FormInput
-            label="Enter Your Password"
+            label={t("auth.passwordLabel")}
             control={control}
             name="password"
-            placeholder="Enter password"
-            rules={{ required: "Password must min.8 characters" }}
+            placeholder={t("auth.passwordPlaceholder")}
+            rules={{ required: t("auth.passwordRequired") }}
             secureTextEntry={true}
             showPasswordIcon={true}
           />
         </View>
         <View>
           <Pressable onPress={onForgotPassPress}>
-            <Text className="text-primary text-right">Forgot Password?</Text>
+            <Text className="text-primary text-right">
+              {t("auth.forgotPassword")}
+            </Text>
           </Pressable>
         </View>
         <CustomButton
           onPress={handleSubmit(onSubmit)}
           containerClassName="w-[95%] mt-[30px]"
           disabled={!isValid}
-          title="Log In"
+          title={t("auth.loginButton")}
           loading={isLoading}
         />
         {/* Divider */}
         <View className="flex-row items-center justify-center my-5">
           <View className="flex-1 h-px bg-[#E6E6E6]" />
-          <Text className="mx-4 text-[#9099A2] font-normal">or</Text>
+          <Text className="mx-4 text-[#9099A2] font-normal">
+            {t("common.or")}
+          </Text>
           <View className="flex-1 h-px bg-[#E6E6E6]" />
         </View>
 
@@ -234,7 +242,7 @@ const Login = () => {
                     isTablet ? "text-xl" : "text-base"
                   } font-semibold text-textPrimary text-center `}
                 >
-                  Please wait...
+                  {t("common.pleaseWait")}
                 </Text>
               </>
             ) : (
@@ -249,7 +257,7 @@ const Login = () => {
                     isTablet ? "text-xl" : "text-base"
                   } ml-3 text-base  text-textPrimary font-semibold`}
                 >
-                  Continue With Google
+                  {t("auth.continueWithGoogle")}
                 </Text>
               </>
             )}
@@ -259,10 +267,10 @@ const Login = () => {
         {/* Login Link */}
         <View className="flex-row items-center justify-center mt-8 mb-6">
           <Text className="text-gray-600 font-normal">
-            Do not have an account?{" "}
+            {t("auth.noAccount")}{" "}
           </Text>
           <TouchableOpacity onPress={onLoginPress} activeOpacity={0.7}>
-            <Text className="text-primary font-medium">Sign Up</Text>
+            <Text className="text-primary font-medium">{t("auth.signUp")}</Text>
           </TouchableOpacity>
         </View>
       </View>

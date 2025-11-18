@@ -1,4 +1,6 @@
 import { persistor, store } from "@/store";
+import { useAppDispatch } from "@/store/redux/hooks"; // Changed this
+import { loadLanguage } from "@/store/slices/languageSlice";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
@@ -11,8 +13,26 @@ import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import "../global.css";
+import "../src/i18n/config";
 
 SplashScreen.preventAutoHideAsync();
+
+// Create a component inside PersistGate to load language
+function AppContent() {
+  const dispatch = useAppDispatch(); // Now properly typed!
+
+  useEffect(() => {
+    // Load saved language when app starts
+    dispatch(loadLanguage());
+  }, [dispatch]);
+
+  return (
+    <>
+      <Slot />
+      <StatusBar backgroundColor="white" />
+    </>
+  );
+}
 
 function RootLayout() {
   const [loaded] = useFonts({
@@ -48,10 +68,7 @@ function RootLayout() {
         text1Style={{
           fontSize: 14,
           fontWeight: "400",
-          // FIX: Removed custom font here as it interferes with toast dismissal
-          // fontFamily: "regular",
         }}
-        // FIX: Replaced 0 with a safe limit
         text2NumberOfLines={2}
       />
     ),
@@ -63,13 +80,10 @@ function RootLayout() {
         text1Style={{
           fontSize: 14,
           fontWeight: "400",
-          // FIX: Removed custom font here as it interferes with toast dismissal
-          // fontFamily: "regular",
         }}
         text2Style={{
           fontSize: 12,
         }}
-        // FIX: Replaced 0 with a safe limit
         text2NumberOfLines={2}
       />
     ),
@@ -93,8 +107,7 @@ function RootLayout() {
           }
           persistor={persistor}
         >
-          <Slot />
-          <StatusBar backgroundColor="white" />
+          <AppContent />
           <Toast config={toastConfig} />
         </PersistGate>
       </ReduxProvider>

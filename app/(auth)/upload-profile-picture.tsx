@@ -8,23 +8,25 @@ import { uploadToCloudinary } from "@/utils/cloudinaryUpload";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next"; // <-- Import useTranslation
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const UploadProfilePicture = () => {
+  const { t } = useTranslation(); // <-- Initialize useTranslation
   const { showSuccess, showError } = useToast();
   const { selectedImage, pickImage } = useImagePicker();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
-
-  // const [createUploadSignature, { isLoading: isCreatingSignature }] =
-  //   useCreateUploadSignatureMutation();
 
   const [createGeneralSignature, { isLoading: isCreatingSignature }] =
     useCreateGeneralSignatureMutation();
 
   const handleSubmit = async () => {
     if (!selectedImage?.uri) {
-      showError("Error", "Please select an image");
+      showError(
+        t("common.error"),
+        t("uploadProfilePictureScreen.selectImageError")
+      );
       return;
     }
 
@@ -39,7 +41,6 @@ const UploadProfilePicture = () => {
       }).unwrap();
 
       // Step 2: Create file object for React Native
-      // In React Native, we pass the URI directly with metadata
       const fileToUpload = {
         uri: selectedImage.uri,
         type: selectedImage.mimeType ?? "image/jpeg",
@@ -57,13 +58,16 @@ const UploadProfilePicture = () => {
         tags: signatureResponse.data.params.tags.split(","),
       });
 
-      showSuccess("Success", "Profile image uploaded successfully");
+      showSuccess(
+        t("common.success"),
+        t("uploadProfilePictureScreen.uploadSuccess")
+      );
 
       router.push("/(auth)/service");
     } catch (error: any) {
       showError(
-        "Error",
-        error?.data?.message || error?.message || "Something went wrong"
+        t("common.error"),
+        error?.data?.message || t("common.somethingWentWrong")
       );
     } finally {
       setIsUploading(false);
@@ -80,14 +84,12 @@ const UploadProfilePicture = () => {
             isTablet ? "text-3xl" : "text-2xl"
           } font-semibold text-textPrimary mb-2`}
         >
-          Upload profile picture
+          {t("uploadProfilePictureScreen.title")}
         </Text>
         <Text
           className={`text-[#666666] pt-1  mb-8 ${isTablet ? "text-xl" : "text-base"}`}
         >
-          Add a clear photo of yourself to build trust with vehicle owners and
-          fleet managers. A profile picture helps clients recognize you and
-          makes your profile stand out.
+          {t("uploadProfilePictureScreen.instruction")}
         </Text>
 
         {/* profile image */}
@@ -118,10 +120,10 @@ const UploadProfilePicture = () => {
                   />
                 </View>
                 <Text className="font-semibold pt-[10px]">
-                  Tap to upload profile picture
+                  {t("uploadProfilePictureScreen.uploadPrompt")}
                 </Text>
                 <Text className="text-[#666666] text-sm text-center pt-1">
-                  Max. File Size: 10MB
+                  {t("uploadProfilePictureScreen.maxFileSize")}
                 </Text>
               </View>
             )}
@@ -132,6 +134,7 @@ const UploadProfilePicture = () => {
           onPress={handleSubmit}
           disabled={!selectedImage || isLoading}
           containerClassName=" mt-12"
+          title={t("common.continue")}
           loading={isLoading}
         />
       </View>

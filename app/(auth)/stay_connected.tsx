@@ -7,9 +7,11 @@ import AuthLayout from "@/layout/AuthLayout";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Switch, Text, View } from "react-native";
 
 const StayConnected = () => {
+  const { t } = useTranslation();
   const { showError } = useToast();
 
   const [enableNotifications, setEnableNotifications] = useState(false);
@@ -30,7 +32,11 @@ const StayConnected = () => {
         setIsVisible(true);
       }
     } catch (error: any) {
-      showError("Error", error?.data?.message || "Failed to save settings");
+      // Use translated keys for the toast message
+      showError(
+        t("common.error"),
+        error?.data?.message || t("stayConnectedScreen.failedToSaveSettings")
+      );
       console.error("Error saving settings:", error);
     }
   };
@@ -58,13 +64,12 @@ const StayConnected = () => {
               isTablet ? "text-3xl" : "text-2xl"
             } font-semibold text-textPrimary mb-2 mt-6`}
           >
-            Stay connected and ready
+            {t("stayConnectedScreen.title")}
           </Text>
           <Text
             className={`text-[#666666] ${isTablet ? "text-xl" : "text-base"}`}
           >
-            Enable notifications to get job alerts and status updates, and allow
-            location access for on-site assignments and workshop visibility.
+            {t("stayConnectedScreen.description")}{" "}
           </Text>
         </View>
 
@@ -75,7 +80,7 @@ const StayConnected = () => {
             <Text
               className={`text-[#191919] ${isTablet ? "text-lg" : "text-base"}`}
             >
-              Enable notifications
+              {t("stayConnectedScreen.enableNotifications")}{" "}
             </Text>
             <Switch
               value={enableNotifications}
@@ -91,7 +96,8 @@ const StayConnected = () => {
             <Text
               className={`text-[#191919] ${isTablet ? "text-lg" : "text-base"}`}
             >
-              Allow location access
+              {t("stayConnectedScreen.allowLocationAccess")}{" "}
+              {/* <-- Translated Label */}
             </Text>
             <Switch
               value={allowLocationAccess}
@@ -106,7 +112,7 @@ const StayConnected = () => {
         {/* Create Account Button */}
         <View className="mt-auto mb-8">
           <CustomButton
-            title="Create Account"
+            title={t("stayConnectedScreen.createAccountButton")}
             onPress={handleCreateAccount}
             containerClassName="w-full"
             loading={isLoading}
