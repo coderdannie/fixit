@@ -112,6 +112,9 @@ export interface CopilotMessage {
   images?: string[];
   status: "pending" | "sent" | "failed";
   clientMsgId?: string;
+  fromAi?: string;
+  voiceUri?: string;
+  voiceDuration?: number;
 }
 
 export interface Participant {
@@ -171,6 +174,7 @@ export interface GetChatHistoryResponse {
       createdAt: string;
       clientMsgId: string;
       mediaUrl: string;
+      fromAi: string;
       // ... other message fields
     }[];
     nextOlderCursor?: {

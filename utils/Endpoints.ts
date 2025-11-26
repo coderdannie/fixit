@@ -6,6 +6,8 @@ export const Endpoints = {
   CREATE_GENERAL_UPLOAD_SIGNATURE: "/uploads/signature",
   PREFERENCE: "/preferences",
   USER_PREFERENCES: "/users/me/preferences",
+  GET_STATES: "/public/states",
+  GET_STATE_LGS: "/public/states/",
 
   ROOT: "/",
   VERIFY_CODE: "/auth/verify-otp",
@@ -24,6 +26,7 @@ export const Endpoints = {
   GET_CURRENT_LOGGED_IN_USER: "/users/me",
   GET_SPECIALIZATION: "/admin/specialization",
   GET_SERVICES: "/admin/services",
+  FLEET_PROFILE_SETUP: ".FLEET_PROFILE_SETUP",
 
   //jobs
   ADD_NOTE: "/mechanics/notes",
@@ -63,6 +66,8 @@ export const RtkqTagEnum = {
   GET_CURRENT_LOGGED_IN_USER: "GET_CURRENT_LOGGED_IN_USER",
   GET_SPECIALIZATION: "GET_SPECIALIZATION",
   GET_SERVICES: "GET_SERVICES",
+  GET_STATES: "GET_STATES",
+  GET_STATE_LGS: "GET_STATE_LGS",
   //job
   ADD_NOTE: "ADD_NOTE",
   GET_ALL_NOTES: "GET_ALL_NOTES",

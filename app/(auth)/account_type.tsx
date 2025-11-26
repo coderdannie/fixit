@@ -4,25 +4,27 @@ import { languages, roleOptions } from "@/components/common/constant";
 import CustomButton from "@/components/CustomButton";
 import CustomDropdown from "@/components/CustomDropdown";
 import Icon from "@/components/Icon";
+import { useAsyncStorage } from "@/hooks/useAsyncStorage";
 import useToast from "@/hooks/useToast";
-import i18n from "@/src/i18n/config";
-import { RootState } from "@/store"; // ADD THIS
+import { RootState } from "@/store";
 import { useAppDispatch } from "@/store/redux/hooks";
 import { changeLanguage } from "@/store/slices/languageSlice"; // ADD THIS
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // ADD THIS
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux"; // ADD THIS
+import { useSelector } from "react-redux";
 
 const RoleSelection = () => {
-  const { t } = useTranslation(); // ADD THIS
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const currentLanguage = useSelector(
     (state: RootState) => state.language.currentLanguage
-  ); // ADD THIS
+  );
+
+  const { setValue } = useAsyncStorage("account-type");
 
   const { showSuccess, showError } = useToast();
 
@@ -48,22 +50,20 @@ const RoleSelection = () => {
       const res = await createAccountType({
         role: selectedRole.toUpperCase(),
       }).unwrap();
-
+      await setValue(selectedRole);
       if (res) {
         if (selectedRole.includes("mechanic")) {
           router.push("/(auth)/mechanic-profile-setup");
+        } else if (selectedRole === "fleet_manager") {
+          router.push("/(auth)/fleet-profile");
+        } else {
+          router.push("/(auth)/vehicle-owner");
         }
       }
     } catch (error: any) {
       showError("Error", error?.data?.message || t("roleSelection.error"));
     }
   };
-
-  useEffect(() => {
-    console.log("🌍 Current language from Redux:", currentLanguage);
-    console.log("🌍 Current i18n language:", i18n.language);
-    console.log("🌍 Translation test:", t("roleSelection.title"));
-  }, [currentLanguage, t]);
 
   const handleLanguageSelect = (language: string) => {
     console.log("👆 User selected language:", language);

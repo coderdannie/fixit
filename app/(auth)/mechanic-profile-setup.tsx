@@ -1,4 +1,5 @@
 import { useMechanicProfileSetupMutation } from "@/apis/accountSetupQuery";
+import { useGetStateLgsQuery, useGetStatesQuery } from "@/apis/api";
 import { experienceOptions } from "@/components/common/constant";
 import CustomButton from "@/components/CustomButton";
 import CustomDropdown from "@/components/CustomDropdown";
@@ -8,33 +9,20 @@ import Icon from "@/components/Icon";
 import useToast from "@/hooks/useToast";
 import AuthLayout from "@/layout/AuthLayout";
 import { MechanicProfileFormType } from "@/types/app";
-import { isTablet } from "@/utils/utils";
+import { convertTo24Hour, isTablet } from "@/utils/utils";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-// --- NEW UTILITY FUNCTION TO CONVERT 12HR (e.g., "9:00 AM") TO 24HR (e.g., "09:00") FOR API ---
-const convertTo24Hour = (time12: string): string => {
-  if (!time12 || !time12.includes(" ")) return "";
-
-  const [time, period] = time12.split(" ");
-  let [hours, minutes] = time.split(":");
-  let h = parseInt(hours, 10);
-
-  if (period === "PM" && h !== 12) {
-    h += 12;
-  } else if (period === "AM" && h === 12) {
-    h = 0;
-  }
-
-  return `${h.toString().padStart(2, "0")}:${minutes.padStart(2, "0")}`;
-};
-// -------------------------------------------------------------------------------------------------
+import { useTranslation } from "react-i18next";
 
 const MechanicProfileSetup = () => {
+  const { t } = useTranslation();
+
   const { showSuccess, showError } = useToast();
+  const { data: statesData, isLoading: isLoadingStates } = useGetStatesQuery();
 
   const [mechanicProfileSetup, { isLoading, error }] =
     useMechanicProfileSetupMutation();
@@ -50,6 +38,8 @@ const MechanicProfileSetup = () => {
     defaultValues: {
       businessName: "",
       businessAddress: "",
+      state: "",
+      lga: "",
       yearsOfExperience: "",
       availabilityFrom: "",
       availabilityTo: "",
@@ -60,11 +50,50 @@ const MechanicProfileSetup = () => {
   // Watch form values for validation
   const watchedValues = watch();
 
+  // Fetch LGAs based on selected state
+  const { data: lgasData, isLoading: isLoadingLgas } = useGetStateLgsQuery(
+    { state: watchedValues.state },
+    { skip: !watchedValues.state } // Skip query if no state is selected
+  );
+
   // Bottom sheet refs (only for time pickers now)
   const fromTimePickerRef = useRef<BottomSheet>(null);
   const toTimePickerRef = useRef<BottomSheet>(null);
 
-  // --- REMOVED convertTo12Hour function - it is no longer needed for display ---
+  // Transform states data for dropdown
+  const stateOptions = useMemo(() => {
+    if (!statesData?.data) return [];
+    return statesData.data.map((state: any) => ({
+      name: state.state,
+      value: state.alias,
+    }));
+  }, [statesData]);
+
+  // Transform LGAs data for dropdown
+  const lgaOptions = useMemo(() => {
+    if (!lgasData?.data?.lgas) return [];
+    return lgasData.data.lgas.map((lga: string) => ({
+      name: lga,
+      value: lga,
+    }));
+  }, [lgasData]);
+
+  // Reset LGA when state changes
+  useEffect(() => {
+    if (watchedValues.state) {
+      setValue("lga", "", { shouldValidate: false });
+    }
+  }, [watchedValues.state, setValue]);
+
+  // Handle state selection
+  const handleStateSelect = (value: string) => {
+    setValue("state", value, { shouldValidate: true });
+  };
+
+  // Handle LGA selection
+  const handleLgaSelect = (value: string) => {
+    setValue("lga", value, { shouldValidate: true });
+  };
 
   // Handle experience selection
   const handleExperienceSelect = (value: string) => {
@@ -102,19 +131,26 @@ const MechanicProfileSetup = () => {
       const res = await mechanicProfileSetup({
         businessName: values?.businessName,
         businessAddress: values?.businessAddress,
+        state: values?.state,
+        lga: values?.lga,
         yearsOfExperience: Number(values?.yearsOfExperience),
-
-        // --- REVISED: Convert 12-hour state value to 24-hour API value ---
         availabilityStartTime: convertTo24Hour(values?.availabilityFrom),
         availabilityEndTime: convertTo24Hour(values?.availabilityTo),
-        // ----------------------------------------------------------------
       }).unwrap();
       if (res) {
-        showSuccess("Success", res.message || "Profile created successfully");
+        // Use t() for success message keys
+        showSuccess(
+          t("common.success"),
+          res.message || t("mechanicProfileSetup.profileCreatedSuccess")
+        );
         router.replace("/(auth)/upload-profile-picture");
       }
     } catch (error: any) {
-      showError("Error", error?.data?.message || "Something went wrong");
+      // Use t() for error message key
+      showError(
+        t("common.error"),
+        error?.data?.message || t("common.somethingWentWrong")
+      );
     }
   };
 
@@ -122,6 +158,8 @@ const MechanicProfileSetup = () => {
   const isFormValid =
     watchedValues.businessName.trim() !== "" &&
     watchedValues.businessAddress.trim() !== "" &&
+    watchedValues.state.trim() !== "" &&
+    watchedValues.lga.trim() !== "" &&
     watchedValues.yearsOfExperience !== "" &&
     watchedValues.availabilityFrom !== "" &&
     watchedValues.availabilityTo !== "";
@@ -130,7 +168,7 @@ const MechanicProfileSetup = () => {
     <>
       <AuthLayout currentStep={1} showStepper={true}>
         <ScrollView
-          className="flex-1"
+          className="flex-1 mb-8"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -140,52 +178,103 @@ const MechanicProfileSetup = () => {
                 isTablet ? "text-3xl" : "text-2xl"
               } font-semibold text-textPrimary mb-2`}
             >
-              Mechanic profile setup
+              {/* Translate Title */}
+              {t("mechanicProfileSetup.title")}
             </Text>
             <Text className="text-[#666666] pt-1 text-base mb-8">
-              Tell us more about your skills and experience so we can connect
-              you with the right repair jobs. Setting up your profile makes it
-              easier for you to get matched with service requests faster.
+              {/* Translate Instruction */}
+              {t("mechanicProfileSetup.instruction")}
             </Text>
 
             {/* Form Fields */}
             <View>
               {/* Business Name */}
               <FormInput
-                label="Business Name"
+                // Translate Label
+                label={t("mechanicProfileSetup.businessNameLabel")}
                 control={control}
                 name="businessName"
-                placeholder="Enter business name"
-                rules={{ required: "Business name is required" }}
+                // Translate Placeholder
+                placeholder={t("mechanicProfileSetup.businessNamePlaceholder")}
+                // Translate Rule message
+                rules={{
+                  required: t("mechanicProfileSetup.businessNameRequired"),
+                }}
               />
 
               {/* Business Address */}
               <FormInput
-                label="Business Address"
+                // Translate Label
+                label={t("mechanicProfileSetup.businessAddressLabel")}
                 control={control}
                 name="businessAddress"
-                placeholder="Enter business address"
-                rules={{ required: "Business address is required" }}
+                // Translate Placeholder
+                placeholder={t(
+                  "mechanicProfileSetup.businessAddressPlaceholder"
+                )}
+                // Translate Rule message
+                rules={{
+                  required: t("mechanicProfileSetup.businessAddressRequired"),
+                }}
                 multiline={true}
               />
 
-              {/* Years of Experience - Now using CustomDropdown */}
+              {/* State */}
               <View className="gap-2 mb-6">
                 <Text className="text-base font-medium text-textPrimary">
-                  Years of Experience
+                  {/* Translate Label */}
+                  {t("mechanicProfileSetup.stateLabel")}
+                </Text>
+                <CustomDropdown
+                  options={stateOptions}
+                  selectedValue={watchedValues.state}
+                  onSelect={handleStateSelect}
+                  // Translate Placeholder
+                  placeholder={t("mechanicProfileSetup.statePlaceholder")}
+                />
+              </View>
+
+              {/* Local Government Area */}
+              <View className="gap-2 mb-6">
+                <Text className="text-base font-medium text-textPrimary">
+                  {/* Translate Label */}
+                  {t("mechanicProfileSetup.lgaLabel")}
+                </Text>
+                <CustomDropdown
+                  options={lgaOptions}
+                  selectedValue={watchedValues.lga}
+                  onSelect={handleLgaSelect}
+                  placeholder={
+                    !watchedValues.state
+                      ? t("mechanicProfileSetup.lgaPlaceholderNoState")
+                      : isLoadingLgas
+                        ? t("mechanicProfileSetup.lgaLoading")
+                        : t("mechanicProfileSetup.lgaPlaceholder")
+                  }
+                  disabled={!watchedValues.state || isLoadingLgas}
+                />
+              </View>
+
+              {/* Years of Experience */}
+              <View className="gap-2 mb-6">
+                <Text className="text-base font-medium text-textPrimary">
+                  {/* Translate Label */}
+                  {t("mechanicProfileSetup.experienceLabel")}
                 </Text>
                 <CustomDropdown
                   options={experienceOptions}
                   selectedValue={watchedValues.yearsOfExperience}
                   onSelect={handleExperienceSelect}
-                  placeholder="Select years of experience"
+                  // Translate Placeholder
+                  placeholder={t("mechanicProfileSetup.experiencePlaceholder")}
                 />
               </View>
 
               {/* Availability Section */}
               <View className="gap-4 pt-6">
                 <Text className="text-base font-medium text-textPrimary">
-                  Select Availability
+                  {/* Translate Title */}
+                  {t("mechanicProfileSetup.availabilityTitle")}
                 </Text>
 
                 <View className="flex-row gap-4">
@@ -203,11 +292,12 @@ const MechanicProfileSetup = () => {
                             : "text-gray-400"
                         }`}
                       >
-                        {/* --- REVISED DISPLAY LOGIC --- */}
                         {watchedValues.availabilityFrom
-                          ? watchedValues.availabilityFrom // Use state value directly (e.g., "9:00 AM")
-                          : "From"}
-                        {/* ----------------------------- */}
+                          ? watchedValues.availabilityFrom
+                          : // Translate Placeholder
+                            t(
+                              "mechanicProfileSetup.availabilityFromPlaceholder"
+                            )}
                       </Text>
                       <Icon
                         type="Feather"
@@ -232,11 +322,10 @@ const MechanicProfileSetup = () => {
                             : "text-gray-400"
                         }`}
                       >
-                        {/* --- REVISED DISPLAY LOGIC --- */}
                         {watchedValues.availabilityTo
-                          ? watchedValues.availabilityTo // Use state value directly (e.g., "5:00 PM")
-                          : "To"}
-                        {/* ----------------------------- */}
+                          ? watchedValues.availabilityTo
+                          : // Translate Placeholder
+                            t("mechanicProfileSetup.availabilityToPlaceholder")}
                       </Text>
                       <Icon
                         type="Feather"
@@ -256,8 +345,9 @@ const MechanicProfileSetup = () => {
         <View className={`${isTablet ? "px-10" : "px-6"} pb-8 bg-white`}>
           <CustomButton
             onPress={handleSubmit(onSubmit)}
-            title="Continue"
-            disabled={!isFormValid}
+            // Translate Title
+            title={t("common.continue")}
+            disabled={!isFormValid || isLoadingStates || isLoadingLgas}
             loading={isLoading}
           />
         </View>
@@ -266,8 +356,8 @@ const MechanicProfileSetup = () => {
       {/* From Time Picker */}
       <CustomTimePicker
         ref={fromTimePickerRef}
-        title="Select Start Time"
-        // Ensure initial selected time is 12-hour format for the picker if it's currently a 24-hour default
+        // Translate Title
+        title={t("mechanicProfileSetup.timePickerStartTitle")}
         selectedTime={watchedValues.availabilityFrom || "9:00 AM"}
         onTimeSelect={handleFromTimeSelect}
       />
@@ -275,8 +365,8 @@ const MechanicProfileSetup = () => {
       {/* To Time Picker */}
       <CustomTimePicker
         ref={toTimePickerRef}
-        title="Select End Time"
-        // Ensure initial selected time is 12-hour format for the picker if it's currently a 24-hour default
+        // Translate Title
+        title={t("mechanicProfileSetup.timePickerEndTitle")}
         selectedTime={watchedValues.availabilityTo || "5:00 PM"}
         onTimeSelect={handleToTimeSelect}
       />

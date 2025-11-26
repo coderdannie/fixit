@@ -3,16 +3,25 @@ import {
   useSendAiMessageMutation,
   useStartChatMutation,
 } from "@/apis/aiChatQuery";
-import BackBtn from "@/components/BackBtn";
-import Icon, { SendMessageIcon, VoicerRecordingIcon } from "@/components/Icon";
-import { ImagePreview } from "@/components/modules/Chats/AiCopilot";
+import Icon, {
+  CopyIcon,
+  SendMessageIcon,
+  VoicerRecordingIcon,
+} from "@/components/Icon";
+import {
+  DateSeparator,
+  ImagePreview,
+} from "@/components/modules/Chats/AiCopilot";
+import { VoiceMessageBubble } from "@/components/modules/Chats/VoiceMessageBubble";
+import { VoiceRecorder } from "@/components/modules/Chats/VoiceRecorder";
 import useAuthUser from "@/hooks/useAuthUser";
+import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import { CopilotMessage, GetChatHistoryRequest } from "@/types/chats";
 import {
   createAiCopilotSocket,
   generateClientMsgId,
 } from "@/utils/aiCopilotSocket";
-import { fileToImagePayload, formatDates, isTablet } from "@/utils/utils";
+import { fileToBase64, fileToImagePayload, isTablet } from "@/utils/utils";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -27,8 +36,10 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  ImageBackground,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -36,17 +47,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
-
-const DateSeparator = ({ date }: { date: Date }) => (
-  <View className="items-center my-4">
-    <View className="bg-white px-4 border-gray-200">
-      <Text className="text-xs text-[#808080]font-medium">
-        {formatDates(date)}
-      </Text>
-    </View>
-  </View>
-);
 
 const MessageBubble = ({
   message,
@@ -148,7 +150,37 @@ const MessageBubble = ({
         )}
       </View>
       {message.status === "sent" && (
-        <Text className="text-[#808080] text-xs mt-1">{message.time}</Text>
+        <View
+          className="flex-row items-center justify-between mt-1"
+          style={{ maxWidth }}
+        >
+          <Text className="text-[#808080] text-xs">{message.time}</Text>
+          <View className="flex-row gap-3">
+            {/* Thumbs Up Button */}
+            <TouchableOpacity
+              onPress={() => console.log("Thumbs Up clicked for", message.id)}
+            >
+              <Icon type="Octicons" name="thumbsup" size={18} color="#808080" />
+            </TouchableOpacity>
+
+            {/* Thumbs Down Button */}
+            <TouchableOpacity
+              onPress={() => console.log("Thumbs Down clicked for", message.id)}
+            >
+              <Icon
+                type="Octicons"
+                name="thumbsdown"
+                size={18}
+                color="#808080"
+              />
+            </TouchableOpacity>
+
+            {/* Copy Button */}
+            <TouchableOpacity>
+              <CopyIcon />
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -159,8 +191,140 @@ const Copilot = () => {
   const params = useLocalSearchParams();
   const { authUser } = useAuthUser();
   const token = authUser?.accessToken;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  console.log("id", authUser?.data?.id);
+  const {
+    isRecording,
+    recordingDuration,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+    playSound,
+    stopSound,
+    isPlaying,
+  } = useVoiceRecording();
+
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+
+  // ✅ Handle voice recording send
+  const handleVoiceSend = async () => {
+    const voiceUri = await stopRecording();
+
+    if (!voiceUri || !conversationId || !socket?.connected || !joined) {
+      Alert.alert("Error", "Failed to send voice message. Please try again.");
+      return;
+    }
+
+    const clientMsgId = generateClientMsgId();
+    const now = new Date();
+
+    const optimisticMessage: CopilotMessage = {
+      id: clientMsgId,
+      clientMsgId,
+      type: "user",
+      text: "", // Empty text for voice messages
+      voiceUri,
+      voiceDuration: recordingDuration,
+      time: now
+        .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        .toUpperCase(),
+      timestamp: now,
+      status: "pending",
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 150);
+
+    try {
+      // Convert voice file to base64
+      const voicePayload = await fileToBase64(voiceUri);
+
+      socket.emit(
+        "copilot:ask",
+        {
+          conversationId,
+          inputType: "audio",
+          audio: voicePayload,
+          clientMsgId,
+          // tier,
+          metadata: { source: "mobile", duration: recordingDuration },
+        },
+        (ack?: { ok: boolean; error?: string }) => {
+          if (!ack?.ok) {
+            console.warn("⚠️ Socket send failed for voice message");
+            // Handle fallback if needed
+          }
+        }
+      );
+    } catch (error) {
+      console.error("❌ Error sending voice message:", error);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.clientMsgId === clientMsgId ? { ...msg, status: "failed" } : msg
+        )
+      );
+      Alert.alert("Error", "Failed to send voice message. Please try again.");
+    }
+  };
+
+  // ✅ Handle voice playback
+  const handlePlayVoice = async (uri: string, messageId: string) => {
+    if (playingMessageId === messageId) {
+      // If currently playing this message, stop it
+      await stopSound();
+      setPlayingMessageId(null);
+    } else {
+      // Stop any other playing message
+      if (playingMessageId) {
+        await stopSound();
+      }
+
+      // Start playing this message with a callback to reset state when done
+      setPlayingMessageId(messageId);
+      await playSound(uri, () => {
+        // ✅ This callback runs when the audio finishes
+        console.log("🎵 Audio finished playing for message:", messageId);
+        setPlayingMessageId(null);
+      });
+    }
+  };
+
+  const handleStopVoice = async () => {
+    await stopSound();
+    setPlayingMessageId(null);
+  };
+
+  // ✅ Update MessageBubble to handle voice messages
+  const MessageBubbleWithVoice = ({
+    message,
+    onRetry,
+  }: {
+    message: CopilotMessage;
+    onRetry?: (msg: CopilotMessage) => void;
+  }) => {
+    // If it's a voice message
+    if (message.voiceUri) {
+      return (
+        <VoiceMessageBubble
+          voiceUri={message.voiceUri}
+          duration={message.voiceDuration || 0}
+          isUser={message.type === "user"}
+          time={message.time}
+          onPlay={(uri) => handlePlayVoice(uri, message.id)}
+          onStop={handleStopVoice}
+          isPlaying={playingMessageId === message.id}
+        />
+      );
+    }
+
+    // Regular text/image message
+    return <MessageBubble message={message} onRetry={onRetry} />;
+  };
+
+  const dispatch = useDispatch();
 
   // Initial conversationId from URL params or null
   const initialConvId = params.conversationId as string | null;
@@ -195,15 +359,12 @@ const Copilot = () => {
   const [startChat, { isLoading: isStartingChat }] = useStartChatMutation();
   const [sendAiMessageAPI] = useSendAiMessageMutation();
 
-  // Create socket instance
+  // socket instance
   const socket = useMemo(() => {
     if (!token) return null;
     return createAiCopilotSocket(token);
   }, [token]);
 
-  // ----------------------------------------------------
-  // HISTORY FETCHING HOOK
-  // ----------------------------------------------------
   const queryArgs: GetChatHistoryRequest = {
     conversationId: conversationId || "",
     limit: 20,
@@ -223,51 +384,41 @@ const Copilot = () => {
   // Access data correctly for pagination status
   const hasMoreHistory = historyData?.data?.hasMoreOlder || false;
 
-  // ----------------------------------------------------
+  console.log("history data", historyData);
   // EFFECT TO HANDLE INCOMING HISTORY DATA
-  // ----------------------------------------------------
   useEffect(() => {
     if (historyData) {
       const formattedMessages: CopilotMessage[] = historyData.data.items.map(
         (msg) => {
-          // Determine if the message starts with the AI's signature
-          const isAISignature = msg.text?.startsWith("Samuel here.");
-
-          const messageType = isAISignature ? "ai" : "user";
+          const messageType = msg.fromAi ? "ai" : "user";
 
           return {
             id: msg.id,
             conversationId: msg.conversationId,
             senderId: msg.senderId,
             text: msg.text,
-
-            // ✅ CORRECTED TYPE LOGIC: Use content signature
             type: messageType as "user" | "ai" | "system",
-
             timestamp: new Date(msg.createdAt),
             time: new Date(msg.createdAt)
               .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
               .toUpperCase(),
             status: "sent",
-
             clientMsgId: msg.clientMsgId || undefined,
             images: msg.mediaUrl ? [msg.mediaUrl] : undefined,
           };
         }
       );
 
-      // When cursor is NOT set (initial load or refresh), replace all messages
       if (!cursor.cursorCreatedAt && !cursor.cursorId) {
-        setMessages(formattedMessages.reverse());
+        setMessages(formattedMessages);
 
-        // Scroll to bottom on initial load
         setTimeout(
           () => scrollViewRef.current?.scrollToEnd({ animated: false }),
           200
         );
       } else {
-        // When cursor IS set (loading older), prepend older messages
-        setMessages((prev) => [...formattedMessages.reverse(), ...prev]);
+        // ✅ FIX: When loading older messages, prepend them (they're also oldest-first)
+        setMessages((prev) => [...formattedMessages, ...prev]);
       }
     }
   }, [historyData]);
@@ -326,11 +477,7 @@ const Copilot = () => {
     initChat();
   }, [token, conversationId, startChat]);
 
-  // ----------------------------------------------------
-  // Socket.IO setup (Existing Logic)
-  // ----------------------------------------------------
   useEffect(() => {
-    // ... (Socket connection logic remains unchanged) ...
     if (!socket || !token || !conversationId) {
       console.log("⏳ Waiting for socket setup");
       return;
@@ -360,12 +507,12 @@ const Copilot = () => {
       console.log("❌ Socket disconnected:", reason);
       setConnected(false);
       setJoined(false);
-      addSystemMessage(`Disconnected: ${reason}`);
+      // Remove: addSystemMessage(`Disconnected: ${reason}`);
     };
 
     const handleConnectError = (error: any) => {
       console.error("❌ Socket connection error:", error);
-      addSystemMessage("Connection error");
+      // Remove: addSystemMessage("Connection error");
     };
 
     // Handler when AI starts processing
@@ -488,7 +635,6 @@ const Copilot = () => {
       currentStreamRef.current = "";
     };
 
-    // Handler for errors
     const handleNovaError = ({
       error,
       clientMsgId,
@@ -509,7 +655,15 @@ const Copilot = () => {
         );
       }
 
-      addSystemMessage(`Error: ${error}`);
+      const isUserFacingError =
+        error.toLowerCase().includes("limit") ||
+        error.toLowerCase().includes("quota") ||
+        error.toLowerCase().includes("subscription");
+
+      if (isUserFacingError) {
+        setErrorMessage(error);
+      }
+
       currentStreamRef.current = "";
     };
 
@@ -690,6 +844,7 @@ const Copilot = () => {
       console.error("❌ Error sending message:", error);
       sendViaAPI(conversationId, clientMsgId, message.trim());
     }
+    setErrorMessage(null);
   };
 
   const sendViaAPI = async (
@@ -754,9 +909,6 @@ const Copilot = () => {
   const canSend =
     (message.trim() || selectedImages.length > 0) && connected && joined;
 
-  // ----------------------------------------------------
-  // UPDATE LOADING STATE
-  // ----------------------------------------------------
   const isLoadingData =
     isStartingChat || (conversationId && isLoadingHistory && !historyData);
 
@@ -772,51 +924,122 @@ const Copilot = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={[]}>
       <KeyboardAvoidingView
         behavior="padding"
         className="flex-1"
         keyboardVerticalOffset={keyboardOffset}
       >
         {/* Header */}
-        <View className=" bg-white">
-          <View className={` ${isTablet ? "px-8" : "px-4"} py-4`}>
-            <BackBtn />
-            <View className="flex-row pt-6 items-center justify-between">
-              <View className="flex-1 ">
-                <Text
-                  className={`${isTablet ? "text-2xl" : "text-xl"} font-semibold text-gray-900`}
+        <View style={{ backgroundColor: "#2964C2" }}>
+          {/* Header with Background Image */}
+          <ImageBackground
+            source={require("@/assets/images/chat-header-bg.png")}
+            style={{
+              paddingTop: Platform.OS === "ios" ? 60 : 50,
+            }}
+            resizeMode="cover"
+          >
+            <View className={`${isTablet ? "px-8" : "px-5"} pb-[14px]`}>
+              {/* Back Button */}
+              <View className="mb-4">
+                <Pressable
+                  onPress={() => router.push("/(tabs)/home")}
+                  style={{
+                    width: isTablet ? 42 : 32,
+                    height: isTablet ? 42 : 32,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 8,
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  }}
                 >
-                  Chat with Fixit Nova
-                </Text>
-                {/* <Text className="text-xs text-gray-500 mt-0.5">
-                  {connected && joined ? "Online" : "Connecting..."}
-                </Text> */}
+                  <Icon
+                    type="Ionicons"
+                    name="chevron-back"
+                    color="#00000"
+                    size={24}
+                  />
+                </Pressable>
               </View>
 
+              {/* Title and Action Buttons */}
+              <View className="flex-row items-center justify-between">
+                <Text
+                  className={`${isTablet ? "text-3xl" : "text-2xl"} font-semibold text-white`}
+                >
+                  Chat with Nova
+                </Text>
+
+                <View className="flex-row items-center space-x-3">
+                  {/* Plus Button */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      router.push("/(tabs)/ai-copilot");
+                    }}
+                    activeOpacity={0.7}
+                    style={{
+                      width: isTablet ? 42 : 32,
+                      height: isTablet ? 42 : 32,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                      backgroundColor: "rgba(255, 255, 255, 0.9)",
+                      marginRight: 12,
+                    }}
+                  >
+                    <Icon type="Ionicons" name="add" color="#00000" size={24} />
+                  </TouchableOpacity>
+
+                  {/* History Button */}
+                  <TouchableOpacity
+                    onPress={handleViewHistory}
+                    activeOpacity={0.7}
+                    style={{
+                      width: isTablet ? 42 : 32,
+                      height: isTablet ? 42 : 32,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 8,
+                      backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    }}
+                  >
+                    <Icon
+                      type="MaterialCommunityIcons"
+                      name="history"
+                      color="#00000"
+                      size={26}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
+
+        {errorMessage && (
+          <View className="bg-red-50 border-l-4 border-red-500 px-4 py-3 mx-4 mt-2 rounded">
+            <View className="flex-row items-start">
+              <Icon
+                type="MaterialCommunityIcons"
+                name="alert-circle"
+                size={20}
+                color="#DC2626"
+              />
+              <View className="flex-1 ml-3">
+                <Text className="text-red-800 text-sm font-medium">
+                  {errorMessage}
+                </Text>
+              </View>
               <TouchableOpacity
-                onPress={handleViewHistory}
+                onPress={() => setErrorMessage(null)}
                 activeOpacity={0.7}
-                className="ml-3"
-                style={{
-                  width: isTablet ? 42 : 32,
-                  height: isTablet ? 42 : 32,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 10,
-                  backgroundColor: "#F2F2F2",
-                }}
               >
-                <Icon
-                  type="MaterialCommunityIcons"
-                  name="history"
-                  color="#000000"
-                  size={24}
-                />
+                <Icon type="Ionicons" name="close" size={20} color="#DC2626" />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Messages */}
         <ScrollView
@@ -872,10 +1095,15 @@ const Copilot = () => {
                   new Date(messages[index - 1].timestamp).toDateString() !==
                     new Date(msg.timestamp).toDateString();
 
+                const uniqueKey = `${msg.id}-${index}`;
+
                 return (
-                  <View key={msg.id}>
+                  <View key={uniqueKey}>
                     {shouldShowDate && <DateSeparator date={msg.timestamp} />}
-                    <MessageBubble message={msg} onRetry={handleRetry} />
+                    <MessageBubbleWithVoice
+                      message={msg}
+                      onRetry={handleRetry}
+                    />
                   </View>
                 );
               })}
@@ -903,6 +1131,13 @@ const Copilot = () => {
         {/* Image Preview */}
         <ImagePreview images={selectedImages} onRemove={handleRemoveImage} />
 
+        {/* ✅ Voice Recorder Overlay */}
+        <VoiceRecorder
+          isRecording={isRecording}
+          duration={recordingDuration}
+          onStop={handleVoiceSend}
+          onCancel={cancelRecording}
+        />
         {/* Input Area */}
         <View
           className="bg-gray-10 border-t border-gray-200"
@@ -959,11 +1194,15 @@ const Copilot = () => {
                 />
               </View>
               <TouchableOpacity
-                onPress={handleSend}
+                onPress={startRecording}
                 activeOpacity={0.7}
-                disabled={!canSend}
+                disabled={!connected || !joined || isRecording}
               >
-                <VoicerRecordingIcon />
+                <VoicerRecordingIcon
+                  color={
+                    connected && joined && !isRecording ? "#2964C2" : "#9CA3AF"
+                  }
+                />
               </TouchableOpacity>
               {/* Send Button */}
               <TouchableOpacity

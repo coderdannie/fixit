@@ -19,6 +19,7 @@ interface CustomDropdownProps {
   selectedValue: string;
   onSelect: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const CustomDropdown = ({
@@ -26,6 +27,7 @@ const CustomDropdown = ({
   selectedValue,
   onSelect,
   placeholder = "Select an option",
+  disabled = false,
 }: CustomDropdownProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -40,9 +42,12 @@ const CustomDropdown = ({
   return (
     <>
       <TouchableOpacity
-        className="w-full h-[50px] border border-[#E6E6E6] rounded-[50px] px-5 bg-white flex-row items-center justify-between"
-        onPress={() => setIsVisible(true)}
+        className={`w-full h-[50px] border border-[#E6E6E6] rounded-[50px] px-5 flex-row items-center justify-between ${
+          disabled ? "bg-gray-100 opacity-50" : "bg-white"
+        }`}
+        onPress={() => !disabled && setIsVisible(true)}
         activeOpacity={0.8}
+        disabled={disabled}
       >
         <Text
           className={`text-base flex-1 ${

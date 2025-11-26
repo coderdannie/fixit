@@ -74,7 +74,7 @@ export const ImagePreview = ({
             />
             <TouchableOpacity
               onPress={() => onRemove(index)}
-              className="absolute -top-2 -right-2 bg-red-500 rounded-full w-6 h-6 items-center justify-center"
+              className="absolute -top -right-2 bg-red-500 rounded-full w-6 h-6 items-center justify-center"
               activeOpacity={0.7}
             >
               <Icon type="Ionicons" name="close" size={16} color="#FFFFFF" />
@@ -88,8 +88,8 @@ export const ImagePreview = ({
 
 export const DateSeparator = ({ date }: { date: Date }) => (
   <View className="items-center my-4">
-    <View className="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
-      <Text className="text-xs text-gray-600 font-medium">
+    <View className="bg-white px-4 border-gray-200">
+      <Text className="text-xs text-[#808080]font-medium">
         {formatDates(date)}
       </Text>
     </View>

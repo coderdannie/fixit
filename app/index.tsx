@@ -12,7 +12,7 @@ export default function Index() {
   const accessToken = authUser?.accessToken;
   const onboardingCompleted = authUser?.data?.onboarding?.onboardingCompleted;
 
-  console.log("onboarding", onboardingCompleted);
+  console.log("onboarding", authUser?.data?.role);
 
   // Only fetch onboarding if logged in AND onboarding not completed
   const shouldFetchOnboarding = accessToken && !onboardingCompleted;

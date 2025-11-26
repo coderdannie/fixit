@@ -67,6 +67,22 @@ export const accountSetupQuery = api.injectEndpoints({
       }),
       providesTags: [{ type: RtkqTagEnum.GET_SERVICES }],
     }),
+    fleetProfileSetup: builder.mutation({
+      query: (args) => ({
+        url: Endpoints.FLEET_PROFILE_SETUP,
+        method: "POST",
+        body: args,
+      }),
+      invalidatesTags: [{ type: RtkqTagEnum.ROOT }],
+    }),
+    addVehicle: builder.mutation({
+      query: (args) => ({
+        url: Endpoints.FLEET_PROFILE_SETUP,
+        method: "POST",
+        body: args,
+      }),
+      invalidatesTags: [{ type: RtkqTagEnum.ROOT }],
+    }),
   }),
 });
 
@@ -78,4 +94,6 @@ export const {
   useUserSettingsMutation,
   useGetSpecializationQuery,
   useGetServicesQuery,
+  useFleetProfileSetupMutation,
+  useAddVehicleMutation,
 } = accountSetupQuery;

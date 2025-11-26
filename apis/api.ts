@@ -5,8 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 
-export const BASE_URL =
-  "http://fixit-fixitserver-ebifgn-14d745-72-61-105-131.traefik.me/api/v1";
+export const BASE_URL = "https://api.bodunrindavid.xyz/api/v1";
 
 export const SOCKET_BASE_URL =
   "http://fixit-fixitserver-ebifgn-14d745-72-61-105-131.traefik.me";
@@ -33,12 +32,13 @@ const baseQueryWithAuth = fetchBaseQuery({
 // Custom baseQuery wrapper to handle 401
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQueryWithAuth(args, api, extraOptions);
+
   const isExpiredTokenError =
-    // 1. Check if it's a 400 error
-    result.error && result.error.status === 400;
-  // Check if the response status is 401
+    result.error &&
+    result.error.status === 401 &&
+    (result.error.data as { message?: string })?.message === "Token Expired";
+
   if (isExpiredTokenError) {
-    // Show alert to user
     Alert.alert(
       "Session Expired",
       "Your session has expired. Please log in again.",
@@ -46,10 +46,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
         {
           text: "OK",
           onPress: () => {
-            // Dispatch clearAuth action
             api.dispatch(clearAuth());
-
-            // Navigate to login screen
             router.replace("/(auth)/login");
           },
         },
@@ -91,17 +88,24 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: RtkqTagEnum.UPLOAD_FILE }],
     }),
+    getStates: builder.query<any, void>({
+      query: () => ({
+        url: Endpoints.GET_STATES,
+        method: "GET",
+      }),
+      providesTags: () => [{ type: RtkqTagEnum.GET_STATES }],
+    }),
 
-    getFile: builder.query<string, { publicId: string }>({
-      query: ({ publicId }) => {
-        const url = `${Endpoints.GET_FILE}?key=${publicId}`;
+    getStateLgs: builder.query<any, { state: string }>({
+      query: ({ state }) => {
+        const url = `${Endpoints.GET_STATE_LGS}/${state}/lgas`;
         return {
           url,
           method: "GET",
         };
       },
-      providesTags: (_result, _error, { publicId }) => [
-        { type: RtkqTagEnum.GET_FILE, id: publicId },
+      providesTags: (_result, _error, { state }) => [
+        { type: RtkqTagEnum.GET_STATE_LGS, id: state },
       ],
     }),
 
@@ -136,10 +140,11 @@ export const {
   useRootQuery,
   useUploadFileMutation,
   useUploadDataUrlMutation,
-  useGetFileQuery,
+  useGetStateLgsQuery,
   usePreferenceQuery,
   useUserPreferenceMutation,
   useGetUserPreferenceQuery,
+  useGetStatesQuery,
 } = api;
 
 export default api;

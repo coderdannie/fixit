@@ -316,7 +316,13 @@ export const SendMessageIcon = (props: any) => (
   </Svg>
 );
 
-export const VoicerRecordingIcon = (props: any) => (
+export const VoicerRecordingIcon = ({
+  color,
+  ...props
+}: {
+  color: string;
+  [key: string]: any;
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -325,7 +331,7 @@ export const VoicerRecordingIcon = (props: any) => (
     {...props}
   >
     <Path
-      stroke="#2964C2"
+      stroke={color}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
@@ -420,6 +426,31 @@ export const VerveIcon = (props: any) => (
         height={1418}
         preserveAspectRatio="none"
       />
+    </Defs>
+  </Svg>
+);
+
+export const CopyIcon = (props: any) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={18}
+    height={18}
+    fill="none"
+    {...props}
+  >
+    <G clipPath="url(#a)">
+      <Path
+        stroke="gray"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M3 12c-.825 0-1.5-.675-1.5-1.5V3c0-.825.675-1.5 1.5-1.5h7.5c.825 0 1.5.675 1.5 1.5M7.5 6H15a1.5 1.5 0 0 1 1.5 1.5V15a1.5 1.5 0 0 1-1.5 1.5H7.5A1.5 1.5 0 0 1 6 15V7.5A1.5 1.5 0 0 1 7.5 6Z"
+      />
+    </G>
+    <Defs>
+      <ClipPath id="a">
+        <Path fill="#fff" d="M0 0h18v18H0z" />
+      </ClipPath>
     </Defs>
   </Svg>
 );

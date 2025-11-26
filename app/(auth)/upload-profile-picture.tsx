@@ -1,13 +1,14 @@
 import { useCreateGeneralSignatureMutation } from "@/apis/authQuery";
 import CustomButton from "@/components/CustomButton";
 import Icon from "@/components/Icon";
+import { useAsyncStorage } from "@/hooks/useAsyncStorage";
 import useImagePicker from "@/hooks/useImagePicker";
 import useToast from "@/hooks/useToast";
 import AuthLayout from "@/layout/AuthLayout";
 import { uploadToCloudinary } from "@/utils/cloudinaryUpload";
 import { isTablet } from "@/utils/utils";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next"; // <-- Import useTranslation
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -18,8 +19,34 @@ const UploadProfilePicture = () => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
 
+  const { storedValue: account_type } = useAsyncStorage("account-type");
   const [createGeneralSignature, { isLoading: isCreatingSignature }] =
     useCreateGeneralSignatureMutation();
+
+  console.log("account type", account_type);
+
+  const instructionKey = useMemo(() => {
+    if (account_type === "mechanic") {
+      // Original instruction for mechanics
+      return "uploadProfilePictureScreen.instruction_mechanic";
+    } else if (account_type === "fleet_manager") {
+      // New instruction for fleet managers
+      return "uploadProfilePictureScreen.instruction_fleet_manager";
+    } else {
+      // New instruction for vehicle owners (the else part)
+      return "uploadProfilePictureScreen.instruction_vehicle_owner";
+    }
+  }, [account_type]);
+
+  const displayInstruction = t(instructionKey, {
+    // Fallback text in case the key is missing in translation files
+    defaultValue:
+      account_type === "fleet_manager"
+        ? "Upload a clear picture of yourself or business logo to give your fleet profile a recognizable identity."
+        : account_type === "mechanic"
+          ? "Add a clear photo of yourself to build trust with vehicle owners and fleet managers. A profile picture helps clients recognize you and makes your profile stand out."
+          : "Upload a clear picture of yourself. This helps mechanics confirm they’re meeting the right person during a service request.",
+  });
 
   const handleSubmit = async () => {
     if (!selectedImage?.uri) {
@@ -89,7 +116,7 @@ const UploadProfilePicture = () => {
         <Text
           className={`text-[#666666] pt-1  mb-8 ${isTablet ? "text-xl" : "text-base"}`}
         >
-          {t("uploadProfilePictureScreen.instruction")}
+          {displayInstruction}
         </Text>
 
         {/* profile image */}

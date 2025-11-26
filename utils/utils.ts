@@ -198,3 +198,34 @@ export const fileToImagePayload = (
       reject(e);
     }
   });
+
+export const fileToBase64 = async (uri: string): Promise<string> => {
+  const response = await fetch(uri);
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      resolve(base64.split(",")[1]); // Remove data:audio/...;base64, prefix
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+export const convertTo24Hour = (time12: string): string => {
+  if (!time12 || !time12.includes(" ")) return "";
+
+  const [time, period] = time12.split(" ");
+  let [hours, minutes] = time.split(":");
+  let h = parseInt(hours, 10);
+
+  if (period === "PM" && h !== 12) {
+    h += 12;
+  } else if (period === "AM" && h === 12) {
+    h = 0;
+  }
+
+  return `${h.toString().padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+};

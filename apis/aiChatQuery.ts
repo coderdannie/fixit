@@ -39,6 +39,7 @@ export const aiChatQuery = api.injectEndpoints({
       // Corrected tag type, assuming CHAT_MESSAGES is for specific conversations
       invalidatesTags: (result, error, { conversationId }) => [
         { type: RtkqTagEnum.AI_CHAT_MESSAGES, id: conversationId },
+        { type: RtkqTagEnum.AI_CHAT_SESSION, id: "LIST" }, // Add this line
       ],
     }),
 
@@ -127,12 +128,11 @@ export const aiChatQuery = api.injectEndpoints({
           return newItems;
         }
 
-        // Append new items to the existing list (assuming structure is { data: { items: [] } })
         return {
           ...newItems,
           data: {
             ...newItems.data,
-            // Concatenate the items arrays from current and new data
+
             items: [...currentCache.data.items, ...newItems.data.items],
           },
         };

@@ -46,6 +46,12 @@
         }
       ],
       [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      [
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.271975408269-j3brq3a0tjp6jluhmo55otjh6n0jvmvp"

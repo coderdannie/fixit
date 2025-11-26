@@ -2,6 +2,7 @@ import { useGetAllConversationsQuery } from "@/apis/aiChatQuery";
 import BackBtn from "@/components/BackBtn";
 import Icon, { DeleteIcon } from "@/components/Icon";
 import { isTablet } from "@/utils/utils";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -80,6 +81,11 @@ const ChatHistory = () => {
     ...(cursorId && { cursorId }),
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   // Check if there are more conversations to load
   const hasMoreOlder = conversationsData?.data?.hasMoreOlder ?? false;
 
@@ -296,34 +302,31 @@ const ChatHistory = () => {
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
       {/* Header */}
       <View className="">
-        <View
-          className={`flex-row items-center justify-between ${isTablet ? "px-8" : "px-4"} py-4`}
-        >
+        <View className={` ${isTablet ? "px-8" : "px-4"} py-4`}>
           <BackBtn />
-
-          <View className="flex-1 items-center">
+          <View className="flex-row mt-6 items-center justify-between">
             <Text
-              className={`${isTablet ? "text-lg" : "text-base"} font-semibold text-gray-900`}
+              className={`${isTablet ? "text-3xl" : "text-2xl"} font-semibold text-gray-900`}
             >
               History
             </Text>
-          </View>
 
-          <TouchableOpacity
-            onPress={handleClearHistory}
-            activeOpacity={0.7}
-            disabled={chatHistory.length === 0 || isLoading}
-          >
-            <Text
-              className={`${isTablet ? "text-base" : "text-sm"} ${
-                chatHistory.length === 0 || isLoading
-                  ? "text-gray-300"
-                  : "text-blue-600"
-              } font-medium`}
+            <TouchableOpacity
+              onPress={handleClearHistory}
+              activeOpacity={0.7}
+              disabled={chatHistory.length === 0 || isLoading}
             >
-              Clear History
-            </Text>
-          </TouchableOpacity>
+              <Text
+                className={`${isTablet ? "text-lg" : "text-base"} ${
+                  chatHistory.length === 0 || isLoading
+                    ? "text-gray-300"
+                    : "text-primary"
+                } font-medium`}
+              >
+                Clear History
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Search Bar */}
